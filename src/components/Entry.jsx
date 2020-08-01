@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import firebase from "./firebase.jsx";
 
 
 const Entry = (props) => {
 
     const [isChecked, setChecked] = useState();
+    const [textArea, setTextArea] = useState('');
 
     useEffect(() => {
             
@@ -28,6 +30,35 @@ const Entry = (props) => {
 
       };
 
+      const handleTextAreaChange = (e) => {
+        setTextArea(e.target.value);
+        console.log(textArea)
+      }
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!textArea) return;
+        addToDataBase(textArea);
+        console.log(textArea)
+      }
+
+      const handleKeyPress = (e) => {
+        e.preventDefault();
+        if (e.key === "Enter") {
+            // if (!textArea) return;
+            addToDataBase(textArea);
+        } else {
+            alert('No entry')
+        }
+    };
+
+
+  const addToDataBase = (entry, index) => {
+    const dbRef = firebase.database().ref();
+    dbRef.push(entry);  
+  };
+
+
 
     let txt;
     if (isChecked) {
@@ -46,7 +77,24 @@ const Entry = (props) => {
                 defaultChecked={isChecked}
             />
             <p>This box is {txt}</p>
-            <button>Hello</button>
+            
+            <form 
+                onSubmit={handleSubmit}
+            >
+                <textarea
+                    name="" id="" cols="30" rows="10" placeholder="message"
+                    onChange={handleTextAreaChange}
+                    // onKeyPress={handleKeyPress}
+
+                ></textarea>
+                <button type='submit'>Submit</button>
+      
+     
+            {/* <input
+                type='text'
+                // onChange={this.myChangeHandler}
+            /> */}
+            </form>
         </>   
     );
 };

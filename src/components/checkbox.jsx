@@ -20,6 +20,15 @@ const Checkbox = () => {
           
           <input type='checkbox' onChange={handleChecked}/>
           <p>This box is {txt}</p>
+          <form>
+          <textarea name="" id="" cols="30" rows="10" placeholder="message"></textarea>
+      
+     
+            <input
+                type='text'
+                // onChange={this.myChangeHandler}
+            />
+            </form>
          
       </>   
     );

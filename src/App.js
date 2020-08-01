@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import './App.css';
 import Entry from './components/Entry.jsx';
 import firebase from "./components/firebase.jsx";
@@ -6,11 +6,22 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 
+
+const selectOptions = {
+  all: false,
+  some: false,
+  none: true
+};
+
 function App() {
   const [items, setItems] = useState([]);
   const [currentDate, setDate] = useState(new Date());
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
-
+  
+  
+  const CheckboxContext = React.createContext(selectOptions.none);
+  const value = useContext(CheckboxContext);
+  console.log('value', value);
   
   useEffect(() => {
     const entryList = [];
@@ -68,11 +79,14 @@ function App() {
             onSelect={handleDateSelect}
           />
 				</div>
+        <CheckboxContext.Provider value={selectOptions.none}>
         <input
           type='checkbox'
           onChange={handleGlobalChecked}
           defaultChecked={globalCheckbox}
         />
+  
+      </CheckboxContext.Provider>
         {items.length ?
         <ul className="search"> 
           {items.map((item, index) => {
