@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import firebase from "./firebase.jsx";
+import firebaseConfig from "./firebaseConfig.jsx";
+import firebase from 'firebase/app';
 
 
 const Entry = (props) => {
