@@ -20,15 +20,12 @@ const providers = {
 };
 
 
-
-
-
-
 function App( {signOut, signInWithGoogle, signInWithGithub, createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const [items, setItems] = useState([]);
   const [currentDate, setDate] = useState(new Date());
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
   const [user, setUser] = useState();
+  const [token, setToken] = useState();
 
 
 
@@ -52,7 +49,7 @@ function openModal() {
 }
 
 function afterOpenModal() {
-  console.log('modal is open');
+  // console.log('modal is open');
 }
 
 function closeModal(){
@@ -71,22 +68,22 @@ const handleGitHubLogin = () => {
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       const token = result.credential.accessToken;
       // The signed-in user info.
-      const user = result.user;
+      const newUser = result.user;
       console.log(result);
-      console.log('signed in')
-      console.log(user)
+      // console.log('signed in')
+      console.log(newUser)
       setIsOpen(false);
-      setUser(user);
+      setUser(newUser);
       // ...
     })
     .catch(function(error) {
       // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      const errorCode = error.code;
+      const errorMessage = error.message;
       // The email of the user's account used.
-      var email = error.email;
+      const email = error.email;
       // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
+      const credential = error.credential;
       // ...
     });
 }
@@ -100,16 +97,18 @@ const googleSignin = () => {
    .signInWithPopup(provider)
    .then(function(result) {
       const token = result.credential.accessToken;
-      const user = result.user;
+      console.log(result.user.email);
+
+      const newUser = result.user;
       console.log(token);
-      console.log(user);
-      // console.log(result);
+      console.log(newUser);
       console.log('signed in');
       setIsOpen(false);
-      setUser(user);
+      setUser(newUser);
+      setToken(result.user.email)
    }).catch(function(error) {
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      const errorCode = error.code;
+      const errorMessage = error.message;
 		
       console.log(error.code)
       console.log(error.message)
@@ -122,6 +121,8 @@ const googleSignout = () => {
    .signOut()
    .then(function() {
       console.log('Signout Succesfull')
+      setUser(null);
+
    }, function(error) {
       console.log('Signout Failed')  
    });
@@ -130,36 +131,66 @@ const googleSignout = () => {
   
   const CheckboxContext = React.createContext(selectOptions.none);
   const value = useContext(CheckboxContext);
-  console.log('value', value);
+  // console.log('value', value);
   
   useEffect(() => {
-    const entryList = [];
-    if (user === true) {
-      const dbRef = firebase.database().ref('users/' + user);
-      dbRef.on('value', (snapshot) => {
-        const data = snapshot.val();
+    if (!user) return;
+
+    const dbRef = firebase.database().ref(`users/${user.displayName}`);
+    dbRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      
+      console.log('response from database', data);
+      
+      let entryList = [];
+      for (let key in data) {
+        entryList.push({
+          log: data[key],
+          uniqueId: key
+        });
+      }
+      setItems(entryList);
+    })
+    
+    // console.log('state', items);
+    // console.log('updated state', items[0].log);
+
+
   
-        console.log('response from database', data);
-  
-        for (let key in data) {
-          entryList.push({
-            log: data[key],
-            uniqueId: key
-          });
-        }
-  
-        setItems(entryList);
-      })
-    }
+    // console.log('response from database', newData)
   
   }, [user]);
 
 
+  const addEntry = async (entry) => {
+    
+    const dbRef = await firebase.database().ref(`users/${user.displayName}`);
+    dbRef.push(entry);
+    dbRef.on('value', (snapshot) => {
+      const data = snapshot.val();
 
-  // const add = () => {
-  //   console.log('items', items);
-  //   console.log('accessing specific values', items[0].uniqueId);
-  // };
+      console.log('response from database', data);
+      // newData = data;
+      
+      const entryList = [];
+      for (let key in data) {
+        entryList.push({
+          log: data[key],
+          uniqueId: key
+        });
+      }
+      setItems(entryList);
+    })
+    
+    // console.log('updated state');
+    // console.log('state 2', items);
+    
+  };
+
+
+
+  console.log('state outside', items);
+
 
 
   const handleDateChange = date => setDate(date);
@@ -174,24 +205,37 @@ const googleSignout = () => {
 
   return (
     <div className="App">
-      
       <>
       <header>
+        <div>
           {
-            user 
-              ? 
-              <div>
-                <p>Hello, {user.displayName}</p>
-                <button onClick={signOut}>Sign out</button>
-              </div>
-              : <button onClick={openModal}>Please sign in</button>
+            items.length && user
+              ?
+              <ul className="here"> 
+                {items.map((item, index) => {
+                  console.log('info to display', item)
+                  return (
+                    <li className="listResult" key={index}>
+                      <p>{item.uniqueId}</p>
+                      <p>{item.log}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+              :  <p>No Data</p>
           }
-          {/* {
-            user
-              ? <button onClick={signOut}>Sign out</button>
-              : <button onClick={signInWithGoogle}>Sign in with Google</button>
-          } */}
-        </header>
+        </div>
+     
+        {
+          user 
+            ? 
+            <div>
+              <p>Hello, {user.displayName}</p>
+              <button onClick={googleSignout}>Sign out</button>
+            </div>
+            : <button onClick={openModal}>Please sign in</button>
+        }
+      </header>
        
       <Modal
         isOpen={modalIsOpen}
@@ -241,13 +285,6 @@ const googleSignout = () => {
 				<div className="inputSearch">
           <h2>Another coding day!</h2>
 					<label className="visuallyHidden">Add another story to your coding journey</label>
-					{/* <input
-						type="text"
-						placeholder="Pick a date"
-						name="userInput"
-					/> */}
-          
-					{/* <button className="searchButton" onClick={() => add()}>Search</button> */}
           <DatePicker
             selected={currentDate}
             onChange={handleDateChange}
@@ -263,35 +300,40 @@ const googleSignout = () => {
           <Entry
             item='new entry'
             isGlobalChecked={globalCheckbox}
+            addEntry={addEntry}
           />
         }
         
 
-        <CheckboxContext.Provider value={selectOptions.none}>
+        {/* <CheckboxContext.Provider value={selectOptions.none}>
         <input
           type='checkbox'
           onChange={handleGlobalChecked}
           defaultChecked={globalCheckbox}
         />
   
-      </CheckboxContext.Provider>
-        {items.length ?
-        <ul className="search"> 
-          {items.map((item, index) => {
-            return (
-              <li className="listResult" key={index}>
-                <Entry
-                  key={index}
-                  item={item.uniqueId}
-                  isGlobalChecked={globalCheckbox}
+      </CheckboxContext.Provider> */}
+        {
+          items.length && user
+          ?
+          <ul className="search"> 
+            {items.map((item, index) => {
+              return (
+                <li className="listResult" key={index}>
+                  <Entry
+                    key={index}
+                    item={item.uniqueId}
+                    isGlobalChecked={globalCheckbox}
+                    user={user}
 
-                />
-              </li>
-            );
-          })}
-        </ul>
-        : null}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+          : null}
 				
+
 			</>
     </div>
   );

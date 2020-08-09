@@ -40,6 +40,7 @@ const Entry = (props) => {
         e.preventDefault();
         if (!textArea) return;
         addToDataBase(textArea);
+        props.addEntry(textArea);
         console.log(textArea)
       }
 
@@ -55,8 +56,9 @@ const Entry = (props) => {
 
 
   const addToDataBase = (entry, index) => {
-    const dbRef = firebase.database().ref();
-    dbRef.push(entry);  
+    const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
+    dbRef.push(entry);
+
   };
 
 
@@ -85,6 +87,7 @@ const Entry = (props) => {
                 <textarea
                     name="" id="" cols="30" rows="10" placeholder="message"
                     onChange={handleTextAreaChange}
+                    // onClick={props.addEntry()}
                     // onKeyPress={handleKeyPress}
 
                 ></textarea>
