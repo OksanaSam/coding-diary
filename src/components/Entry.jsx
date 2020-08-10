@@ -1,50 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import firebaseConfig from "./firebaseConfig.jsx";
 import firebase from 'firebase/app';
 
 
 const Entry = (props) => {
 
-    const [isChecked, setChecked] = useState();
+    const [isChecked, setChecked] = useState(false);
     const [textArea, setTextArea] = useState('');
 
     useEffect(() => {
-            
-        if (props.isGlobalChecked) {
-            setChecked(true);
-        } else {
-            setChecked(false);
-        }
+        setChecked(props.isGlobalChecked); 
+    }, [props.isGlobalChecked]);
 
-        let txt;
-        if (isChecked) {
-            txt = 'checked'
-        } else {
-            txt = 'unchecked'
-        }
-        console.log('props.isGlobalChecked', props.isGlobalChecked)
-        
-    }, [props.isGlobalChecked, isChecked]);
+
 
     const handleChecked = () => {
         setChecked(!isChecked);
+    };
 
-      };
-
-      const handleTextAreaChange = (e) => {
+    const handleTextAreaChange = (e) => {
         setTextArea(e.target.value);
         console.log(textArea)
-      }
+    }
 
-      const handleSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         if (!textArea) return;
         addToDataBase(textArea);
         props.addEntry(textArea);
         console.log(textArea)
-      }
+    }
 
-      const handleKeyPress = (e) => {
+    const handleKeyPress = (e) => {
         e.preventDefault();
         if (e.key === "Enter") {
             // if (!textArea) return;
@@ -52,23 +38,18 @@ const Entry = (props) => {
         } else {
             alert('No entry')
         }
-    };
-
-
-  const addToDataBase = (entry, index) => {
-    const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
-    dbRef.push(entry);
-
-  };
-
-
-
-    let txt;
-    if (isChecked) {
-        txt = 'checked'
-    } else {
-        txt = 'unchecked'
     }
+
+
+    const addToDataBase = (entry, index) => {
+        const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
+        dbRef.push(entry);
+    }
+
+    const handleDelete = (index) => {
+        const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
+        dbRef.child(index).remove();
+    };
 
 
     return (
@@ -76,11 +57,10 @@ const Entry = (props) => {
             <p>{props.item}</p>
             <input
                 type='checkbox'
-                onChange={handleChecked}
-                defaultChecked={isChecked}
+                onChange={() => handleChecked(props.item)}
+                checked={isChecked}
             />
-            <p>This box is {txt}</p>
-            
+             <button onClick={() => handleDelete(props.item)}>delete</button>
             <form 
                 onSubmit={handleSubmit}
             >
@@ -92,12 +72,7 @@ const Entry = (props) => {
 
                 ></textarea>
                 <button type='submit'>Submit</button>
-      
-     
-            {/* <input
-                type='text'
-                // onChange={this.myChangeHandler}
-            /> */}
+
             </form>
         </>   
     );

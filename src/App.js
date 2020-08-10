@@ -1,14 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react';
 import './App.css';
 import Entry from './components/Entry.jsx';
-import EmailPasswordForm from './components/EmailPasswordForm.jsx';
 import firebaseConfig from './components/firebaseConfig.jsx';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import withFirebaseAuth from 'react-with-firebase-auth';
-import Modal from 'react-modal';
+import SignInModal from './components/SignInModal';
+
 
 
 
@@ -24,8 +24,17 @@ function App( {signOut, signInWithGoogle, signInWithGithub, createUserWithEmailA
   const [items, setItems] = useState([]);
   const [currentDate, setDate] = useState(new Date());
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({displayName: "Oksana Posobchuk"});
   const [token, setToken] = useState();
+
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  const openModal = () => {
+      setIsOpen(true);
+  }
+  const closeModal = () => {
+      setIsOpen(false);
+  }
 
 
 
@@ -43,19 +52,8 @@ const selectOptions = {
 };
 
 
-const [modalIsOpen, setIsOpen] = useState(false);
-function openModal() {
-  setIsOpen(true);
-}
 
-function afterOpenModal() {
-  // console.log('modal is open');
-}
-
-function closeModal(){
-  setIsOpen(false);
-}
-
+const [checkboxCounter, setCheckboxCounter] = useState(0);
 
 
 
@@ -151,15 +149,12 @@ const googleSignout = () => {
       }
       setItems(entryList);
     })
-    
-    // console.log('state', items);
-    // console.log('updated state', items[0].log);
-
-
-  
-    // console.log('response from database', newData)
-  
   }, [user]);
+
+
+  const handleGlobalChecked = () => {
+    setGlobalCheckbox(!globalCheckbox);
+  }
 
 
   const addEntry = async (entry) => {
@@ -181,29 +176,19 @@ const googleSignout = () => {
       }
       setItems(entryList);
     })
-    
-    // console.log('updated state');
-    // console.log('state 2', items);
-    
   };
-
-
-
-  console.log('state outside', items);
 
 
 
   const handleDateChange = date => setDate(date);
   const handleDateSelect = date => setDate(date);
 
-  const handleGlobalChecked = () => {
-    setGlobalCheckbox(!globalCheckbox);
-    console.log(globalCheckbox)
-  }
+ 
 
-
+  
 
   return (
+    
     <div className="App">
       <>
       <header>
@@ -213,7 +198,6 @@ const googleSignout = () => {
               ?
               <ul className="here"> 
                 {items.map((item, index) => {
-                  console.log('info to display', item)
                   return (
                     <li className="listResult" key={index}>
                       <p>{item.uniqueId}</p>
@@ -236,49 +220,15 @@ const googleSignout = () => {
             : <button onClick={openModal}>Please sign in</button>
         }
       </header>
-       
-      <Modal
-        isOpen={modalIsOpen}
-        ariaHideApp={false}
-        onAfterOpen={afterOpenModal}
-        onRequestClose={closeModal}
-        contentLabel="Example Modal"
-      >
-        <button onClick={closeModal}>close</button>
-
-        <div>
-          {/* <h1>sign in with google</h1> */}
-          <button onClick={googleSignin}>sign in with google</button>
-       </div>
-
-       <div><p>OR</p></div>
-
-        <div>
-          {/* <h1>sign in with github</h1> */}
-          <button onClick={handleGitHubLogin}>sign in with github</button>
-        </div>
-
-        <div><p>OR</p></div>
-
-        <div>
-          <h1>sign in with email</h1>
-          <EmailPasswordForm
-            onSubmit={signInWithEmailAndPassword}
-          />
-        </div>
-
-        <div>
-          <h1>Don't have an account? Sign up</h1>
-          <EmailPasswordForm
-            onSubmit={createUserWithEmailAndPassword}
-           
-          />
-        </div>
-           
-         
-        
-      </Modal>
-     
+      <SignInModal
+        modalIsOpen={modalIsOpen}
+        closeModal={closeModal}
+        googleSignin={googleSignin}
+        handleGitHubLogin={handleGitHubLogin}
+        signInWithEmailAndPassword={signInWithEmailAndPassword}
+        createUserWithEmailAndPassword={createUserWithEmailAndPassword}
+      />
+      
 
        
 
@@ -291,6 +241,12 @@ const googleSignout = () => {
             onSelect={handleDateSelect}
           />
 				</div>
+        <label htmlFor="">Global Checkbox</label>
+        <input
+          type='checkbox'
+          onChange={handleGlobalChecked}
+          defaultChecked={globalCheckbox}
+        />
 
         {
           !user
@@ -303,16 +259,7 @@ const googleSignout = () => {
             addEntry={addEntry}
           />
         }
-        
-
-        {/* <CheckboxContext.Provider value={selectOptions.none}>
-        <input
-          type='checkbox'
-          onChange={handleGlobalChecked}
-          defaultChecked={globalCheckbox}
-        />
   
-      </CheckboxContext.Provider> */}
         {
           items.length && user
           ?
