@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, lazy, Suspense } from 'react';
 import './App.css';
 import Entry from './components/Entry.jsx';
 import firebaseConfig from './components/firebaseConfig.jsx';
@@ -8,8 +8,9 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import withFirebaseAuth from 'react-with-firebase-auth';
 import SignInModal from './components/SignInModal';
+import useDebounce from './use-debounce';
 
-
+const Artists = React.lazy(() => import('./Artists'));
 
 
 const firebaseAppAuth = firebase.auth();
@@ -26,6 +27,9 @@ function App( {signOut, signInWithGoogle, signInWithGithub, createUserWithEmailA
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
   const [user, setUser] = useState({displayName: "Oksana Posobchuk"});
   const [token, setToken] = useState();
+  const [isSearching, setIsSearching] = useState(false);
+
+  const debouncedItems = useDebounce(items, 500);
 
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -130,6 +134,8 @@ const googleSignout = () => {
   const CheckboxContext = React.createContext(selectOptions.none);
   const value = useContext(CheckboxContext);
   // console.log('value', value);
+
+
   
   useEffect(() => {
     if (!user) return;
@@ -151,6 +157,27 @@ const googleSignout = () => {
     })
   }, [user]);
 
+
+
+  // useEffect(
+  //   () => {
+  //     // Make sure we have a value (user has entered something in input)
+  //     if (debouncedSearchTerm) {
+  //       // Set isSearching state
+  //       setIsSearching(true);
+  //       // Fire off our API call
+  //       searchCharacters(debouncedSearchTerm).then(results => {
+  //         // Set back to false since request finished
+  //         setIsSearching(false);
+  //         // Set results state
+  //         setResults(results);
+  //       });
+  //     } else {
+  //       setResults([]);
+  //     }
+  //   },
+  //   [debouncedSearchTerm]
+  // );
 
   const handleGlobalChecked = () => {
     setGlobalCheckbox(!globalCheckbox);
@@ -184,16 +211,18 @@ const googleSignout = () => {
   const handleDateSelect = date => setDate(date);
 
  
-
+  const Entries = React.lazy(() => import('./Entries'));
   
 
   return (
-    
     <div className="App">
       <>
+      
       <header>
-        <div>
-          {
+        
+      <div>
+        
+        {
             items.length && user
               ?
               <ul className="here"> 
@@ -206,8 +235,9 @@ const googleSignout = () => {
                   );
                 })}
               </ul>
-              :  <p>No Data</p>
+              :  <p>Searching...</p>
           }
+         
         </div>
      
         {
