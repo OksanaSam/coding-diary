@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import firebaseConfig from "./components/firebaseConfig.jsx";
 import firebase from 'firebase/app';
 import SignInModal from './components/SignInModal';
+import styled, { css } from 'styled-components'
+
 
 const firebaseAppAuth = firebase.auth();
 
@@ -204,7 +206,22 @@ const Authentication = (props) => {
             // ...
           });
       }
-      
+      const Button = styled.button`
+        background: transparent;
+        border-radius: 3px;
+        border: 2px solid blue;
+        color: darkblue;
+        margin: 0 1em;
+        padding: 0.25em 1em;
+
+        ${props =>
+          props.primary &&
+          css`
+            background: blue;
+            color: white;
+      `};
+`
+
       return (
           <>
           <p>Authentication</p>
@@ -213,9 +230,9 @@ const Authentication = (props) => {
               ? 
               <div>
                 <p>Hello, {user.displayName}</p>
-                <button onClick={googleSignout}>Sign out</button>
+                <Button onClick={googleSignout}>Sign out</Button>
               </div>
-              : <button onClick={openModal}>Please sign in</button>
+              : <Button onClick={openModal}>Please sign in</Button>
           }
            <SignInModal
                 modalIsOpen={modalIsOpen}

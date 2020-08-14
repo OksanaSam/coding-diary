@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
+import styled, { css } from 'styled-components'
 
 
 const Entry = (props) => {
@@ -51,6 +52,23 @@ const Entry = (props) => {
         dbRef.child(index).remove();
     };
 
+    const Button = styled.button`
+        background: transparent;
+        border-radius: 3px;
+        border: 2px solid blue;
+        color: darkblue;
+        margin: 0 1em;
+        padding: 0.25em 1em;
+
+        ${props =>
+            props.primary &&
+            css`
+            background: blue;
+            color: white;
+            `};
+        `
+
+
 
     return (
         <>
@@ -60,7 +78,7 @@ const Entry = (props) => {
                 onChange={() => handleChecked(props.item)}
                 checked={isChecked}
             />
-             <button onClick={() => handleDelete(props.item)}>delete</button>
+             <Button onClick={() => handleDelete(props.item)}>delete</Button>
             <form 
                 onSubmit={handleSubmit}
             >
@@ -71,7 +89,7 @@ const Entry = (props) => {
                     // onKeyPress={handleKeyPress}
 
                 ></textarea>
-                <button type='submit'>Submit</button>
+                <Button type='submit'>Submit</Button>
 
             </form>
         </>   
