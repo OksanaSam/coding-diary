@@ -31,6 +31,9 @@ const SignInModal = (props) => {
         <div>
           <button onClick={props.handleGitHubLogin}>sign in with github</button>
         </div>
+        <div>
+          <button onClick={props.handleTwitterLogin}>sign in with Twitter</button>
+        </div>
 
         <div>
             <p>OR</p>

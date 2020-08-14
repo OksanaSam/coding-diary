@@ -8,137 +8,43 @@ import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import withFirebaseAuth from 'react-with-firebase-auth';
 import SignInModal from './components/SignInModal';
+import Authentication from './Authentication';
 import useDebounce from './use-debounce';
+import Cards from './components/Cards';
 
 
 const firebaseAppAuth = firebase.auth();
 
-const providers = {
-  googleProvider: new firebase.auth.GoogleAuthProvider(),
+// const providers = {
+//   googleProvider: new firebase.auth.GoogleAuthProvider(),
   
-};
+// };
 
 
-function App( {signOut, signInWithGoogle, signInWithGithub, createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
+function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const [items, setItems] = useState([]);
   const [currentDate, setDate] = useState(new Date());
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
   const [user, setUser] = useState();
   const [token, setToken] = useState();
   const [isSearching, setIsSearching] = useState(false);
-
   const debouncedItems = useDebounce(items, 500);
 
-  const [modalIsOpen, setIsOpen] = useState(false);
+    // trying context
+  const selectOptions = {
+    all: false,
+    some: false,
+    none: true
+  };
 
-  const openModal = () => {
-      setIsOpen(true);
-  }
-  const closeModal = () => {
-      setIsOpen(false);
-  }
-
-
-
-  firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-     console.log('user is signed in')
-    }
-  });
-
-  // trying context
-const selectOptions = {
-  all: false,
-  some: false,
-  none: true
-};
-
-
-
-const [checkboxCounter, setCheckboxCounter] = useState(0);
-
-
-
-const handleGitHubLogin = () => {
-  const provider = new firebase.auth.GithubAuthProvider();
-  firebase
-    .auth()
-    .signInWithPopup(provider)
-    .then(function(result) {
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-      const token = result.credential.accessToken;
-      // The signed-in user info.
-      const newUser = result.user;
-      console.log(result);
-      // console.log('signed in')
-      console.log(newUser)
-      setIsOpen(false);
-      setUser(newUser);
-      // ...
-    })
-    .catch(function(error) {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      const credential = error.credential;
-      // ...
-    });
-}
-
-
-
-const googleSignin = () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-   firebase
-   .auth()
-   .signInWithPopup(provider)
-   .then(function(result) {
-      const token = result.credential.accessToken;
-      console.log(result.user.email);
-
-      const newUser = result.user;
-      console.log(token);
-      console.log(newUser);
-      console.log('signed in');
-      setIsOpen(false);
-      setUser(newUser);
-      setToken(result.user.email)
-   }).catch(function(error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-		
-      console.log(error.code)
-      console.log(error.message)
-   });
-}
-
-const googleSignout = () => {
-   firebase
-   .auth()
-   .signOut()
-   .then(function() {
-      console.log('Signout Succesfull')
-      setUser(null);
-
-   }, function(error) {
-      console.log('Signout Failed')  
-   });
-}
-
-  
+  const [checkboxCounter, setCheckboxCounter] = useState(0);
   const CheckboxContext = React.createContext(selectOptions.none);
   const value = useContext(CheckboxContext);
-  // console.log('value', value);
-
 
   
    useEffect(() => {
     let dbRef;
     if (!user) {
-      // setUser({displayName: 'Oksana Posobchuk'})
       dbRef = firebase.database().ref(`users/Oksana Posobchuk`);
     } else {
       dbRef = firebase.database().ref(`users/${user.displayName}`);
@@ -194,7 +100,6 @@ const googleSignout = () => {
       const data = snapshot.val();
 
       console.log('response from database', data);
-      // newData = data;
       
       const entryList = [];
       for (let key in data) {
@@ -208,117 +113,56 @@ const googleSignout = () => {
   };
 
 
-
   const handleDateChange = date => setDate(date);
   const handleDateSelect = date => setDate(date);
 
- 
-  const Entries = React.lazy(() => import('./Entries'));
+  // const Entries = React.lazy(() => import('./Entries'));
   
 
   return (
     <div className="App">
       <>
-      
       <header>
-        
-      <div>
-        
-        {
-            items.length
-              ?
-              <ul className="here"> 
-                {items.map((item, index) => {
-                  return (
-                    <li className="listResult" key={index}>
-                      <p>{item.uniqueId}</p>
-                      <p>{item.log}</p>
-                    </li>
-                  );
-                })}
-              </ul>
-              :  <p>Searching...</p>
-          }
-         
-        </div>
-     
-        {
-          user 
-            ? 
-            <div>
-              <p>Hello, {user.displayName}</p>
-              <button onClick={googleSignout}>Sign out</button>
-            </div>
-            : <button onClick={openModal}>Please sign in</button>
-        }
+        <Authentication
+          user={user}
+          signInWithEmailAndPassword={signInWithEmailAndPassword}
+          createUserWithEmailAndPassword={createUserWithEmailAndPassword}
+        />
       </header>
-      <SignInModal
-        modalIsOpen={modalIsOpen}
-        closeModal={closeModal}
-        googleSignin={googleSignin}
-        handleGitHubLogin={handleGitHubLogin}
-        signInWithEmailAndPassword={signInWithEmailAndPassword}
-        createUserWithEmailAndPassword={createUserWithEmailAndPassword}
-      />
-      
 
-       
+      <div className="inputSearch">
+        <h2>Another coding day!</h2>
+        <label className="visuallyHidden">Add another story to your coding journey</label>
+        <DatePicker
+          selected={currentDate}
+          onChange={handleDateChange}
+          onSelect={handleDateSelect}
+        />
+      </div>
 
-				<div className="inputSearch">
-          <h2>Another coding day!</h2>
-					<label className="visuallyHidden">Add another story to your coding journey</label>
-          <DatePicker
-            selected={currentDate}
-            onChange={handleDateChange}
-            onSelect={handleDateSelect}
-          />
-				</div>
-        <label htmlFor="">Global Checkbox</label>
+        <label htmlFor='globalCheckbox'>Global Checkbox</label>
         <input
+          name='globalCheckbox'
           type='checkbox'
           onChange={handleGlobalChecked}
           defaultChecked={globalCheckbox}
         />
 
-        {
-          !user
-          ?
-          null 
-          :
-          <Entry
-            item='new entry'
-            isGlobalChecked={globalCheckbox}
-            addEntry={addEntry}
-          />
-        }
-  
-        {
-          items.length
-          ?
-          <ul className="search"> 
-            {items.map((item, index) => {
-              return (
-                <li className="listResult" key={index}>
-                  <Entry
-                    key={index}
-                    item={item.uniqueId}
-                    isGlobalChecked={globalCheckbox}
-                    user={user}
+        <Entry
+          item='new entry'
+          isGlobalChecked={globalCheckbox}
+          addEntry={addEntry}
+        />
 
-                  />
-                </li>
-              );
-            })}
-          </ul>
-          : null}
-				
-
+        <Cards 
+          items={items}
+        />
 			</>
     </div>
   );
 }
 
 export default withFirebaseAuth({
-  providers,
+  // providers,
   firebaseAppAuth,
 })(App);
