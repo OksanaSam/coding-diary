@@ -1,6 +1,9 @@
 import React from 'react';
 import Modal from 'react-modal';
 import EmailPasswordForm from './EmailPasswordForm';
+import { FaTwitterSquare, FaGithub, FaGoogle, FaFacebookSquare } from 'react-icons/fa';
+
+
 
 
 const SignInModal = (props) => {
@@ -21,7 +24,14 @@ const SignInModal = (props) => {
         <button onClick={props.closeModal}>close</button>
 
         <div>
-          <button onClick={props.googleSignin}>sign in with google</button>
+          <button onClick={props.googleSignin}><FaGoogle/></button>
+        </div>
+
+        <div>
+           <p>OR</p>
+        </div>
+        <div>
+          <button onClick={console.log('facebook')}><FaFacebookSquare/></button>
         </div>
 
         <div>
@@ -29,10 +39,10 @@ const SignInModal = (props) => {
         </div>
 
         <div>
-          <button onClick={props.handleGitHubLogin}>sign in with github</button>
+          <button onClick={props.handleGitHubLogin}><FaGithub/></button>
         </div>
         <div>
-          <button onClick={props.handleTwitterLogin}>sign in with Twitter</button>
+          <button onClick={props.handleTwitterLogin}>< FaTwitterSquare/></button>
         </div>
 
         <div>

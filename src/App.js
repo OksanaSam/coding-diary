@@ -7,7 +7,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import withFirebaseAuth from 'react-with-firebase-auth';
-import SignInModal from './components/SignInModal';
 import Authentication from './Authentication';
 import useDebounce from './use-debounce';
 import Cards from './components/Cards';
