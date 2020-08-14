@@ -10,8 +10,6 @@ import withFirebaseAuth from 'react-with-firebase-auth';
 import SignInModal from './components/SignInModal';
 import useDebounce from './use-debounce';
 
-const Artists = React.lazy(() => import('./Artists'));
-
 
 const firebaseAppAuth = firebase.auth();
 
@@ -25,7 +23,7 @@ function App( {signOut, signInWithGoogle, signInWithGithub, createUserWithEmailA
   const [items, setItems] = useState([]);
   const [currentDate, setDate] = useState(new Date());
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
-  const [user, setUser] = useState({displayName: "Oksana Posobchuk"});
+  const [user, setUser] = useState();
   const [token, setToken] = useState();
   const [isSearching, setIsSearching] = useState(false);
 
@@ -137,10 +135,14 @@ const googleSignout = () => {
 
 
   
-  useEffect(() => {
-    if (!user) return;
-
-    const dbRef = firebase.database().ref(`users/${user.displayName}`);
+   useEffect(() => {
+    let dbRef;
+    if (!user) {
+      // setUser({displayName: 'Oksana Posobchuk'})
+      dbRef = firebase.database().ref(`users/Oksana Posobchuk`);
+    } else {
+      dbRef = firebase.database().ref(`users/${user.displayName}`);
+    }
     dbRef.on('value', (snapshot) => {
       const data = snapshot.val();
       
@@ -223,7 +225,7 @@ const googleSignout = () => {
       <div>
         
         {
-            items.length && user
+            items.length
               ?
               <ul className="here"> 
                 {items.map((item, index) => {
@@ -291,7 +293,7 @@ const googleSignout = () => {
         }
   
         {
-          items.length && user
+          items.length
           ?
           <ul className="search"> 
             {items.map((item, index) => {
@@ -315,8 +317,6 @@ const googleSignout = () => {
     </div>
   );
 }
-
-// export default App;
 
 export default withFirebaseAuth({
   providers,
