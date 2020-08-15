@@ -10,6 +10,8 @@ import withFirebaseAuth from 'react-with-firebase-auth';
 import Authentication from './Authentication';
 import useDebounce from './use-debounce';
 import Cards from './components/Cards';
+import ColorPicker from './components/ColorPicker';
+
 
 
 const firebaseAppAuth = firebase.auth();
@@ -133,6 +135,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
         <h2>Another coding day!</h2>
         <label className="visuallyHidden">Add another story to your coding journey</label>
         <DatePicker
+          styles={ {backgroundColor: 'blue'} }
           selected={currentDate}
           onChange={handleDateChange}
           onSelect={handleDateSelect}
@@ -156,7 +159,8 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
         <Cards 
           items={items}
         />
-			</>
+        <ColorPicker />
+			 </>
     </div>
   );
 }
