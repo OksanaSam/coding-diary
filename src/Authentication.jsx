@@ -230,9 +230,9 @@ const Authentication = (props) => {
               ? 
               <div>
                 <p>Hello, {user.displayName}</p>
-                <Button onClick={googleSignout}>Sign out</Button>
+                <button onClick={googleSignout}>Sign out</button>
               </div>
-              : <Button onClick={openModal}>Please sign in</Button>
+              : <button onClick={openModal}>Please sign in</button>
           }
            <SignInModal
                 modalIsOpen={modalIsOpen}

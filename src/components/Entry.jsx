@@ -52,21 +52,21 @@ const Entry = (props) => {
         dbRef.child(index).remove();
     };
 
-    const Button = styled.button`
-        background: transparent;
-        border-radius: 3px;
-        border: 2px solid blue;
-        color: darkblue;
-        margin: 0 1em;
-        padding: 0.25em 1em;
+    // const Button = styled.button`
+    //     background: transparent;
+    //     border-radius: 3px;
+    //     border: 2px solid blue;
+    //     color: darkblue;
+    //     margin: 0 1em;
+    //     padding: 0.25em 1em;
 
-        ${props =>
-            props.primary &&
-            css`
-            background: blue;
-            color: white;
-            `};
-        `
+    //     ${props =>
+    //         props.primary &&
+    //         css`
+    //         background: blue;
+    //         color: white;
+    //         `};
+    //     `
 
 
 
@@ -78,7 +78,7 @@ const Entry = (props) => {
                 onChange={() => handleChecked(props.item)}
                 checked={isChecked}
             />
-             <Button onClick={() => handleDelete(props.item)}>delete</Button>
+             <button onClick={() => handleDelete(props.item)}>delete</button>
             <form 
                 onSubmit={handleSubmit}
             >
@@ -89,7 +89,7 @@ const Entry = (props) => {
                     // onKeyPress={handleKeyPress}
 
                 ></textarea>
-                <Button type='submit'>Submit</Button>
+                <button type='submit'>Submit</button>
 
             </form>
         </>   
