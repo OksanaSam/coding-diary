@@ -1,8 +1,7 @@
 import React, { useContext, useState, useEffect, lazy, Suspense } from 'react';
 import './App.css';
-import Entry from './components/Entry.jsx';
+import NewEntry from './components/Entry.jsx';
 import firebaseConfig from './components/firebaseConfig.jsx';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
@@ -26,6 +25,7 @@ const firebaseAppAuth = firebase.auth();
 function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const [items, setItems] = useState([]);
   const [currentDate, setDate] = useState(new Date());
+  const [selectedDate, setSeletedDate] = useState();
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
   const [user, setUser] = useState();
   const [token, setToken] = useState();
@@ -122,9 +122,15 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   };
 
 
-  const handleDateChange = date => setDate(date);
-  const handleDateSelect = date => setDate(date);
+  const handleDateChange = date => {
+    setDate(date);
+    // console.log(selectedDate)
+  }
 
+  const handleDateSelect = date => {
+    setDate(date);
+    // console.log(selectedDate)
+  }
   // const Entries = React.lazy(() => import('./Entries'));
   
 
@@ -142,12 +148,6 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
       <div className="inputSearch">
         <h2>Another coding day!</h2>
         <label className="visuallyHidden">Add another story to your coding journey</label>
-        <DatePicker
-          styles={ {backgroundColor: 'blue'} }
-          selected={currentDate}
-          onChange={handleDateChange}
-          onSelect={handleDateSelect}
-        />
       </div>
 
         <label htmlFor='globalCheckbox'>Global Checkbox</label>
@@ -158,7 +158,11 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
           defaultChecked={globalCheckbox}
         />
 
-        <Entry
+        <NewEntry
+          // selectedDate={selectedDate}
+          currentDate={currentDate}
+          handleDateChange={handleDateChange}
+          handleDateSelect={handleDateSelect}
           item='new entry'
           isGlobalChecked={globalCheckbox}
           addEntry={addEntry}

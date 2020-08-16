@@ -1,4 +1,7 @@
 import React from 'react';
+import CardNew from './Card'
+
+
 
 const Cards = (props) => {
     return (
@@ -7,11 +10,12 @@ const Cards = (props) => {
                 props.items.length
                 ?
                 <ul className="here"> 
-                    {props.items.map((item, index) => {
+                    {props.items.map((item) => {
                     return (
-                        <li className="listResult" key={index}>
-                        {/* <p>{item.uniqueId}</p> */}
-                        <p>{item.log}</p>
+                        <li className="listResult" key={item.uniqueId}>
+                            <CardNew
+                                log={item.log}
+                            />
                         </li>
                     );
                     })}
