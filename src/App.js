@@ -11,6 +11,7 @@ import Authentication from './Authentication';
 import useDebounce from './use-debounce';
 import Cards from './components/Cards';
 import ColorPicker from './components/ColorPicker';
+import Swal from "sweetalert2";
 
 
 
@@ -94,7 +95,13 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
 
 
   const addEntry = async (entry) => {
-    
+    if (!user) {
+      Swal.fire({
+        title: 'Oops...',
+        text: 'Please sign in',
+        confirmButtonText: 'Ok',
+      });
+    } else {
     const dbRef = await firebase.database().ref(`users/${user.displayName}`);
     dbRef.push(entry);
     dbRef.on('value', (snapshot) => {
@@ -111,6 +118,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
       }
       setItems(entryList);
     })
+    }
   };
 
 
