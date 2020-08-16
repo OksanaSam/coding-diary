@@ -26,8 +26,8 @@ const Entry = (props) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!textArea) return;
-        addToDataBase(textArea);
         props.addEntry(textArea);
+        // props.addEntry(textArea);
         console.log(textArea)
     }
 
@@ -35,17 +35,17 @@ const Entry = (props) => {
         e.preventDefault();
         if (e.key === "Enter") {
             // if (!textArea) return;
-            addToDataBase(textArea);
+            // addToDataBase(textArea);
         } else {
             alert('No entry')
         }
     }
 
 
-    const addToDataBase = (entry, index) => {
-        const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
-        dbRef.push(entry);
-    }
+    // const addToDataBase = (entry, index) => {
+    //     const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
+    //     dbRef.push(entry);
+    // }
 
     const handleDelete = (index) => {
         const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
