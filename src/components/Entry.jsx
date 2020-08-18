@@ -18,7 +18,9 @@ const options = [
 const NewEntry = (props) => {
     const [isChecked, setChecked] = useState(false);
     const [textArea, setTextArea] = useState('');
-    const [selectedOption, setSelectedOption] = useState(options[0].value)
+    const [selectedOption, setSelectedOption] = useState(options[0].value);
+    const [inputValue, setInputValue] = useState('');
+    const [items, setItems] = useState([]);
 
     useEffect(() => {
         setChecked(props.isGlobalChecked); 
@@ -35,10 +37,27 @@ const NewEntry = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!textArea) {
+        if (!inputValue) {
             Swal.fire({
                 title: 'Hm...',
                 text: 'Please enter your text',
+                confirmButtonText: 'Ok',
+            });
+        } else {
+            const newItems = [...items];
+            newItems.push({ text: inputValue, done: false });
+            setItems(newItems);
+            setInputValue('');
+        }
+    }
+
+    
+    const handleCardSubmit = (e) => {
+        e.preventDefault();
+        if (!textArea && !inputValue) {
+            Swal.fire({
+                title: 'Hm...',
+                text: 'Please add at least one entry',
                 confirmButtonText: 'Ok',
             });
         } else {
@@ -46,22 +65,31 @@ const NewEntry = (props) => {
         }
     }
 
-    const handleDelete = (index) => {
-        if (!props.user) {
-            Swal.fire({
-              title: 'Oops...',
-              text: 'Please sign in',
-              confirmButtonText: 'Ok',
-            })
-        } else {
-            const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
-            dbRef.child(index).remove();
-        }
+
+    // const handleDelete = (index) => {
+    //     if (!props.user) {
+    //         Swal.fire({
+    //           title: 'Oops...',
+    //           text: 'Please sign in',
+    //           confirmButtonText: 'Ok',
+    //         })
+    //     } else {
+    //         const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
+    //         dbRef.child(index).remove();
+    //     }
+    // };
+
+    const handleClick = (index) => {
+        const newItems = [...items];
+        newItems[index].done = !newItems[index].done;
+        setItems(newItems);
     };
 
-
-
-    
+    const handleDelete = (index) => {
+        const newItems = [...items];
+        newItems.splice(index, 1);
+        setItems(newItems);
+    };
 
     return (
         <>
@@ -96,16 +124,33 @@ const NewEntry = (props) => {
                 onChange={props.handleDateChange}
                 onSelect={props.handleDateSelect}
             />
-            <form 
-                onSubmit={handleSubmit}
-            >
-                <textarea
-                    name="" id="" cols="30" rows="10" placeholder="message"
-                    onChange={handleTextAreaChange}
-                />
-                <button type='submit'>Submit</button>
 
-            </form>
+        <form onSubmit={handleSubmit}>
+          <label>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+            />
+          </label>
+          <button>Add</button>
+        </form>
+
+        <ul>
+          {items.map((item, id) => (
+            <li key={id}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={item.done}
+                  onClick={() => handleClick(id)}
+                />
+                <span className={item.done ? "done" : null}>{item.text}</span>
+                <button onClick={() => handleDelete(id)}>X</button>
+              </label>
+              </li>
+          ))}
+        </ul>
         </>   
     );
 };
