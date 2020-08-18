@@ -3,6 +3,7 @@ import firebase from 'firebase/app';
 import styled, { css } from 'styled-components';
 import Swal from "sweetalert2";
 import DatePicker from 'react-datepicker';
+import { format, compareAsc } from 'date-fns';
 
 
 
@@ -111,7 +112,8 @@ const NewEntry = (props) => {
             </select>
                 <p className="selectedTool">{selectedOption}</p>
             <p>{props.item}</p>
-            <p>{props.currentDate ? `${props.currentDate.getMonth()} ${props.currentDate.getDate()} ${props.currentDate.getFullYear()}` : null}</p>
+            {/* <p>{props.currentDate ? `${props.currentDate.getMonth()} ${props.currentDate.getDate()} ${props.currentDate.getFullYear()}` : null}</p> */}
+            <p>{props.currentDate ? format(props.currentDate, "do MMMM yyyy") : null}</p>
             <input
                 type='checkbox'
                 onChange={() => handleChecked(props.item)}
