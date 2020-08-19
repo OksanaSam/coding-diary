@@ -28,7 +28,6 @@ const Authentication = (props) => {
 
     const openModal = () => {
         setIsOpen(true);
-        console.log('modalIsOpen')
     }
 
     const closeModal = () => {
@@ -149,33 +148,39 @@ const Authentication = (props) => {
     // });
 
 
-    const handleGitHubLogin = () => {
+    const handleGitHubLogin = async () => {
+      setIsOpen(false);
+      console.log("signing")
         const provider = new firebase.auth.GithubAuthProvider();
-        firebase
+        provider.addScope('public_repo');
+        provider.addScope('read:org');
+        provider.addScope('read:user');
+        const result = await firebase
           .auth()
-          .signInWithPopup(provider)
-          .then(function(result) {
-            // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-            const token = result.credential.accessToken;
-            // The signed-in user info.
-            const newUser = result.user;
-            console.log(result);
-            // console.log('signed in')
-            console.log(newUser)
-            setUser(newUser);
-            setIsOpen(false);
-            // ...
-          })
-          .catch(function(error) {
-            // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.email;
-            // The firebase.auth.AuthCredential type that was used.
-            const credential = error.credential;
-            // ...
-          });
+          .signInWithPopup(provider);
+          // const token = result.credential.accessToken;
+          // The signed-in user info.
+          const newUser = result.user;
+          console.log(result);
+          // console.log('signed in')
+          console.log(newUser)
+          setUser(newUser);
+          setIsOpen(false);
+          
+          // .then(function(result) {
+          //   // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+          //   // ...
+          // })
+          // .catch(function(error) {
+          //   // Handle Errors here.
+          //   const errorCode = error.code;
+          //   const errorMessage = error.message;
+          //   // The email of the user's account used.
+          //   const email = error.email;
+          //   // The firebase.auth.AuthCredential type that was used.
+          //   const credential = error.credential;
+          //   // ...
+          // });
       }
 
 
