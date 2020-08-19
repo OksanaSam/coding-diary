@@ -13,19 +13,21 @@ const providers = {
 };
 
 
-firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-     console.log('user is signed in')
-    }
-  });
-
- 
-
 const Authentication = (props) => {
     const [user, setUser] = useState(props.user);
     const [displayName, setDisplayName] = useState(null);
     const [modalIsOpen, setIsOpen] = useState(false);
     const [email, setEmail] = useState('hello@hh');
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user !== null) {
+        setUser(firebase.auth().currentUser);
+        // setDisplayName()
+        console.log(firebase.auth().currentUser.displayName);
+      } else {
+        console.log('no user');
+      }
+    });
 
     const openModal = () => {
         setIsOpen(true);
@@ -148,8 +150,8 @@ const Authentication = (props) => {
     // });
 
 
-    const handleGitHubLogin = async (provider) => {
-        // const provider = new firebase.auth.GithubAuthProvider();
+    const handleGitHubLogin = () => {
+        const provider = new firebase.auth.GithubAuthProvider();
         provider.addScope('public_repo');
         provider.addScope('read:org');
         provider.addScope('read:user');
@@ -161,7 +163,7 @@ const Authentication = (props) => {
             const userDisplayName = result.additionalUserInfo.username;
             const newUser = result.user.u.uid;
             console.log(userDisplayName, result.user.uid);
-            setUser(newUser);
+            setUser(userDisplayName);
             setDisplayName(userDisplayName);
             setIsOpen(false);
 
@@ -184,16 +186,10 @@ const Authentication = (props) => {
           .auth()
           .signInWithPopup(provider)
           .then(function(result) {
-            // This gives you a Twitter Access Token. You can use it to access the Twitter API.
             const token = result.credential.accessToken;
             const secret = result.credential.secret;
-            // The signed-in user info
             const newUser = result.user;
-            console.log("Twitter", result);
-            // console.log('signed in')
-            // console.log(newUser)
-            // console.log('twitterSignin')
-            // setIsOpen(false);
+            setDisplayName(newUser.displayName);
             setUser(newUser);
             setIsOpen(false);
           })
@@ -232,17 +228,17 @@ const Authentication = (props) => {
           {
             user 
               ? 
-              <div>
+              (<div>
                 <p>Hello, {displayName}</p>
                 <button onClick={signOut}>Sign out</button>
-              </div>
+              </div>)
               : <button onClick={openModal}>Please sign in</button>
           }
            <SignInModal
                 modalIsOpen={modalIsOpen}
                 closeModal={closeModal}
                 googleSignin={googleSignin}
-                handleGitHubLogin={() => handleGitHubLogin(new firebase.auth.GithubAuthProvider())}
+                handleGitHubLogin={handleGitHubLogin}
                 handleTwitterLogin={handleTwitterLogin}
                 signInWithEmailAndPassword={props.signInWithEmailAndPassword}
                 createUserWithEmailAndPassword={props.createUserWithEmailAndPassword}
