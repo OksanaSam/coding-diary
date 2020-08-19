@@ -28,12 +28,14 @@ const Authentication = (props) => {
 
     const openModal = () => {
         setIsOpen(true);
+        console.log('modalIsOpen')
     }
+
     const closeModal = () => {
         setIsOpen(false);
     }
 
-    const googleSignout = () => {
+    const signOut = () => {
         firebase
         .auth()
         .signOut()
@@ -160,8 +162,8 @@ const Authentication = (props) => {
             console.log(result);
             // console.log('signed in')
             console.log(newUser)
-            setIsOpen(false);
             setUser(newUser);
+            setIsOpen(false);
             // ...
           })
           .catch(function(error) {
@@ -183,9 +185,10 @@ const Authentication = (props) => {
           .auth()
           .signInWithPopup(provider)
           .then(function(result) {
-            // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-            // const token = result.credential.accessToken;
-            // The signed-in user info.
+            // This gives you a Twitter Access Token. You can use it to access the Twitter API.
+            const token = result.credential.accessToken;
+            const secret = result.credential.secret;
+            // The signed-in user info
             const newUser = result.user;
             console.log("Twitter", result);
             // console.log('signed in')
@@ -193,6 +196,7 @@ const Authentication = (props) => {
             // console.log('twitterSignin')
             // setIsOpen(false);
             setUser(newUser);
+            setIsOpen(false);
           })
           .catch(function(error) {
             // Handle Errors here.
@@ -206,21 +210,22 @@ const Authentication = (props) => {
             // ...
           });
       }
-      const Button = styled.button`
-        background: transparent;
-        border-radius: 3px;
-        border: 2px solid blue;
-        color: darkblue;
-        margin: 0 1em;
-        padding: 0.25em 1em;
 
-        ${props =>
-          props.primary &&
-          css`
-            background: blue;
-            color: white;
-      `};
-`
+//       const Button = styled.button`
+//         background: transparent;
+//         border-radius: 3px;
+//         border: 2px solid blue;
+//         color: darkblue;
+//         margin: 0 1em;
+//         padding: 0.25em 1em;
+
+//         ${props =>
+//           props.primary &&
+//           css`
+//             background: blue;
+//             color: white;
+//       `};
+// `
 
       return (
           <>
@@ -230,7 +235,7 @@ const Authentication = (props) => {
               ? 
               <div>
                 <p>Hello, {user.displayName}</p>
-                <button onClick={googleSignout}>Sign out</button>
+                <button onClick={signOut}>Sign out</button>
               </div>
               : <button onClick={openModal}>Please sign in</button>
           }

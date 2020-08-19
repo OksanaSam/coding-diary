@@ -6,21 +6,21 @@ import styled, { css } from 'styled-components'
 
 
 
-const Button = styled.button`
-  background: transparent;
-  border-radius: 3px;
-  border: 2px solid blue;
-  color: darkblue;
-  margin: 0 1em;
-  padding: 0.25em 1em;
+// const Button = styled.button`
+//   background: transparent;
+//   border-radius: 3px;
+//   border: 2px solid blue;
+//   color: darkblue;
+//   margin: 0 1em;
+//   padding: 0.25em 1em;
 
-  ${props =>
-    props.primary &&
-    css`
-      background: blue;
-      color: white;
-    `};
-`
+//   ${props =>
+//     props.primary &&
+//     css`
+//       background: blue;
+//       color: white;
+//     `};
+// `
 
 
 
@@ -40,11 +40,11 @@ const SignInModal = (props) => {
             onRequestClose={props.closeModal}
             contentLabel="Example Modal"
         >
-        <Button onClick={props.closeModal}>close</Button>
-        <Button primary onClick={props.googleSignin}><FaGoogle/></Button>
-        <Button primary onClick={console.log('facebook')}><FaFacebookSquare/></Button>
-        <Button primary onClick={props.handleGitHubLogin}><FaGithub/></Button>
-        <Button primary onClick={props.handleTwitterLogin}>< FaTwitterSquare/></Button>
+        <button onClick={props.closeModal}>close</button>
+        <button onClick={props.googleSignin}><FaGoogle/></button>
+        <button onClick={() => console.log('facebook')}><FaFacebookSquare/></button>
+        <button onClick={props.handleGitHubLogin}><FaGithub/></button>
+        <button onClick={props.handleTwitterLogin}>< FaTwitterSquare/></button>
         
 
         <div>
