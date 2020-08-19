@@ -23,6 +23,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 const Authentication = (props) => {
     const [user, setUser] = useState(props.user);
+    const [displayName, setDisplayName] = useState(null);
     const [modalIsOpen, setIsOpen] = useState(false);
     const [email, setEmail] = useState('hello@hh');
 
@@ -57,10 +58,9 @@ const Authentication = (props) => {
             console.log(result.user.email);
       
             const newUser = result.user;
-            console.log(token);
-            console.log(newUser);
             console.log('signed in');
             setIsOpen(false);
+            setDisplayName(result.user.displayName);
             setUser(newUser);
             // setToken(result.user.email)
          }).catch(function(error) {
@@ -148,41 +148,35 @@ const Authentication = (props) => {
     // });
 
 
-    const handleGitHubLogin = async () => {
-      setIsOpen(false);
-      console.log("signing")
-        const provider = new firebase.auth.GithubAuthProvider();
+    const handleGitHubLogin = async (provider) => {
+        // const provider = new firebase.auth.GithubAuthProvider();
         provider.addScope('public_repo');
         provider.addScope('read:org');
         provider.addScope('read:user');
-        const result = await firebase
+        firebase
           .auth()
-          .signInWithPopup(provider);
-          // const token = result.credential.accessToken;
-          // The signed-in user info.
-          const newUser = result.user;
-          console.log(result);
-          // console.log('signed in')
-          console.log(newUser)
-          setUser(newUser);
-          setIsOpen(false);
-          
-          // .then(function(result) {
-          //   // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-          //   // ...
-          // })
-          // .catch(function(error) {
-          //   // Handle Errors here.
-          //   const errorCode = error.code;
-          //   const errorMessage = error.message;
-          //   // The email of the user's account used.
-          //   const email = error.email;
-          //   // The firebase.auth.AuthCredential type that was used.
-          //   const credential = error.credential;
-          //   // ...
-          // });
-      }
+          .signInWithPopup(provider)
+          .then(function(result) {
+            // const token = result.credential.accessToken;
+            const userDisplayName = result.additionalUserInfo.username;
+            const newUser = result.user.u.uid;
+            console.log(userDisplayName, result.user.uid);
+            setUser(newUser);
+            setDisplayName(userDisplayName);
+            setIsOpen(false);
 
+          })
+          .catch(function(error) {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            const credential = error.credential;
+            // ...
+          });
+      }
 
       const handleTwitterLogin = () => {
         const provider = new firebase.auth.TwitterAuthProvider();
@@ -239,7 +233,7 @@ const Authentication = (props) => {
             user 
               ? 
               <div>
-                <p>Hello, {user.displayName}</p>
+                <p>Hello, {displayName}</p>
                 <button onClick={signOut}>Sign out</button>
               </div>
               : <button onClick={openModal}>Please sign in</button>
@@ -248,7 +242,7 @@ const Authentication = (props) => {
                 modalIsOpen={modalIsOpen}
                 closeModal={closeModal}
                 googleSignin={googleSignin}
-                handleGitHubLogin={handleGitHubLogin}
+                handleGitHubLogin={() => handleGitHubLogin(new firebase.auth.GithubAuthProvider())}
                 handleTwitterLogin={handleTwitterLogin}
                 signInWithEmailAndPassword={props.signInWithEmailAndPassword}
                 createUserWithEmailAndPassword={props.createUserWithEmailAndPassword}
