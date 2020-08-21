@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import EmailPasswordForm from './EmailPasswordForm';
 import { FaTwitterSquare, FaGithub, FaGoogle, FaFacebookSquare } from 'react-icons/fa';
-import styled, { css } from 'styled-components'
+// import styled, { css } from 'styled-components'
 
 
 
@@ -26,9 +26,7 @@ import styled, { css } from 'styled-components'
 
 
 const SignInModal = (props) => {
-    
     function afterOpenModal() {
-    // console.log('modal is open');
     }
 
     return (

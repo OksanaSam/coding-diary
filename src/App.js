@@ -67,28 +67,6 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
     })
   }, [user]);
 
-
-
-  // useEffect(
-  //   () => {
-  //     // Make sure we have a value (user has entered something in input)
-  //     if (debouncedSearchTerm) {
-  //       // Set isSearching state
-  //       setIsSearching(true);
-  //       // Fire off our API call
-  //       searchCharacters(debouncedSearchTerm).then(results => {
-  //         // Set back to false since request finished
-  //         setIsSearching(false);
-  //         // Set results state
-  //         setResults(results);
-  //       });
-  //     } else {
-  //       setResults([]);
-  //     }
-  //   },
-  //   [debouncedSearchTerm]
-  // );
-
   const handleGlobalChecked = () => {
     setGlobalCheckbox(!globalCheckbox);
   }
