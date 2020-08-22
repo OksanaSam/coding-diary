@@ -15,9 +15,13 @@ const providers = {
 
 const Authentication = (props) => {
     const [user, setUser] = useState(props.user);
-    const [displayName, setDisplayName] = useState(null);
+    const [displayNameTwo, setDisplayNameTwo] = useState(null);
     const [modalIsOpen, setIsOpen] = useState(false);
     const [email, setEmail] = useState('hello@hh');
+
+    useEffect(({ displayName } = props) => {
+      setDisplayNameTwo(displayName)
+    }, [props.displayName])
 
     firebase.auth().onAuthStateChanged(function(user) {
       if (user !== null) {
@@ -62,7 +66,7 @@ const Authentication = (props) => {
             const newUser = result.user;
             console.log('signed in');
             setIsOpen(false);
-            setDisplayName(result.user.displayName);
+            setDisplayNameTwo(result.user.displayName);
             setUser(newUser);
             // setToken(result.user.email)
          }).catch(function(error) {
@@ -134,7 +138,7 @@ const Authentication = (props) => {
             const newUser = result.user.u.uid;
             console.log(userDisplayName, result.user.uid);
             setUser(userDisplayName);
-            setDisplayName(userDisplayName);
+            setDisplayNameTwo(userDisplayName);
             setIsOpen(false);
 
           })
@@ -158,7 +162,7 @@ const Authentication = (props) => {
             const token = result.credential.accessToken;
             const secret = result.credential.secret;
             const newUser = result.user;
-            setDisplayName(newUser.displayName);
+            setDisplayNameTwo(newUser.displayName);
             setUser(newUser);
             setIsOpen(false);
           })
@@ -198,7 +202,7 @@ const Authentication = (props) => {
             user 
               ? 
               (<div>
-                <p>Hello, {displayName}</p>
+                <p>Hello, {displayNameTwo}</p>
                 <button onClick={signOut}>Sign out</button>
               </div>)
               : <button onClick={openModal}>Please sign in</button>

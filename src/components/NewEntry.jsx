@@ -19,17 +19,23 @@ const options = [
 const NewEntry = (props) => {
     const [isChecked, setChecked] = useState(false);
     const [textArea, setTextArea] = useState('');
+
     const [selectedOptions, setSelectedOptions] = useState(
-        localStorage.getItem('data') || []
+        JSON.parse(localStorage.getItem('data')) || []
     );
 
+
     const [inputValue, setInputValue] = useState('');
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState(
+        JSON.parse(localStorage.getItem('items')) || []
+    );
 
     useEffect(() => {
         setChecked(props.isGlobalChecked); 
         localStorage.setItem('data', JSON.stringify(selectedOptions));
-    }, [props.isGlobalChecked, selectedOptions]);
+        localStorage.setItem('items', JSON.stringify(items));
+
+    }, [props.isGlobalChecked, selectedOptions, items]);
 
 
    
@@ -53,40 +59,34 @@ const NewEntry = (props) => {
                 confirmButtonText: 'Ok',
             });
         } else {
-            const newItems = [...items];
-            newItems.push({ text: inputValue, done: false });
-            setItems(newItems);
+            // const newItems = [...items];
+            // newItems.push({ text: inputValue, done: false });
+            setItems([...items, { text: inputValue, done: false }]);
+            localStorage.setItem('items', JSON.stringify(items))
             setInputValue('');
         }
     }
 
     
-    const handleCardSubmit = (e) => {
-        e.preventDefault();
-        if (!textArea && !inputValue) {
+    const handleCardSubmit = () => {
+        if (items.length < 1) {
             Swal.fire({
-                title: 'Hm...',
-                text: 'Please add at least one entry',
+                title: 'Oops...',
+                text: 'Please add at least one entry!',
                 confirmButtonText: 'Ok',
             });
         } else {
-            props.addEntry(textArea);
+            const dbRef = firebase.database().ref(`users/${props.displayName}`);
+            const obj = { tags: selectedOptions, entries: items };
+            dbRef.push(obj);
+            console.log('added');
+            setItems([]);
+            setSelectedOptions([]);
         }
     }
 
 
-    // const handleDelete = (index) => {
-    //     if (!props.user) {
-    //         Swal.fire({
-    //           title: 'Oops...',
-    //           text: 'Please sign in',
-    //           confirmButtonText: 'Ok',
-    //         })
-    //     } else {
-    //         const dbRef = firebase.database().ref(`users/${props.user.displayName}`);
-    //         dbRef.child(index).remove();
-    //     }
-    // };
+
 
     const handleClick = (index) => {
         const newItems = [...items];
@@ -100,16 +100,28 @@ const NewEntry = (props) => {
         setItems(newItems);
     };
 
+    const handleToolDelete = (index) => {
+        const newOptions = [...selectedOptions];
+        newOptions.splice(index, 1);
+        setSelectedOptions(newOptions);
+    };
+
     const handleSelect = (e) => {
-        if (selectedOptions.includes(e.target.value)) {
+        if (selectedOptions.length > 5) {
+            Swal.fire({
+                title: 'Hm...',
+                text: "You can't add more than 5 tags.",
+                confirmButtonText: 'Ok',
+            });
+        } else if (selectedOptions.includes(e.target.value)) {
             Swal.fire({
                 title: 'Hm...',
                 text: 'You have already added this tag!',
                 confirmButtonText: 'Ok',
             });
         } else {
-            localStorage.setItem('data', JSON.stringify(selectedOptions));
             setSelectedOptions([...selectedOptions, e.target.value])
+            localStorage.setItem('data', JSON.stringify(selectedOptions))
         }
     }
 
@@ -124,25 +136,32 @@ const NewEntry = (props) => {
                 onChange={handleSelect}>
                 {options.map(option => (
                     <option
-                    key={option.value}
-                    selected={option.value === null ? 'selected' : null}
-                    value={option.value}
-                    disabled={option.value === null ? true : null} 
+                        key={option.value}
+                        selected={option.value === null ? 'selected' : null}
+                        value={option.value}
+                        disabled={option.value === null ? true : null} 
                     >
                         {option.name}
                     </option>
             ))}
             </select>
             <ul>
-                {selectedOptions.map((option) => {return (
+                {selectedOptions.map((option, ind) => {return (
                     <>
                     <li key={selectedOptions.length}>{option}</li>
-                    {(selectedOptions.length > 0) ? <input type='checkbox' /> : null}
+                    {(selectedOptions.length > 0)
+                    ?
+                    <>
+                        {/* <input type='checkbox' /> */}
+                        <button onClick={() => handleToolDelete(ind)}>X</button>
+                    </>
+                    :
+                    null}
+
                     </>
                     )}
                 )}
             </ul>
-                <p className="selectedTool">{selectedOptions}</p>
             <p>{props.item}</p>
             {/* <p>{props.currentDate ? `${props.currentDate.getMonth()} ${props.currentDate.getDate()} ${props.currentDate.getFullYear()}` : null}</p> */}
             <p>{props.currentDate ? format(props.currentDate, "do MMMM yyyy") : null}</p>
@@ -185,6 +204,7 @@ const NewEntry = (props) => {
               </li>
           ))}
         </ul>
+        <button onClick={handleCardSubmit}>Save Entry</button>
         </>   
     );
 };

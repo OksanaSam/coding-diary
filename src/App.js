@@ -31,6 +31,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const [token, setToken] = useState();
   const [isSearching, setIsSearching] = useState(false);
   const debouncedItems = useDebounce(items, 500);
+  const [displayName, setDisplayName] = useState(null);
 
     // trying context
   const selectOptions = {
@@ -117,6 +118,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
       <>
       <header>
         <Authentication
+          displayName = {displayName}
           user={user}
           signInWithEmailAndPassword={signInWithEmailAndPassword}
           createUserWithEmailAndPassword={createUserWithEmailAndPassword}
@@ -139,6 +141,8 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
         <NewEntry
           // selectedDate={selectedDate}
           currentDate={currentDate}
+          displayName={displayName}
+          user={user}
           handleDateChange={handleDateChange}
           handleDateSelect={handleDateSelect}
           item='new entry'
@@ -148,6 +152,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
 
         <Cards 
           items={items}
+          displayName={displayName}
         />
         <ColorPicker />
 			 </>
