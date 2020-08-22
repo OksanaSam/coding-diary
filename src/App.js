@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect, lazy, Suspense } from 'react';
 import './App.css';
-import NewEntry from './components/Entry.jsx';
+import NewEntry from './components/NewEntry.jsx';
 import firebaseConfig from './components/firebaseConfig.jsx';
 import 'react-datepicker/dist/react-datepicker.css';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import withFirebaseAuth from 'react-with-firebase-auth';
-import Authentication from './Authentication';
+import Authentication from './components/Authentication';
 import useDebounce from './use-debounce';
 import Cards from './components/Cards';
 import ColorPicker from './components/ColorPicker';

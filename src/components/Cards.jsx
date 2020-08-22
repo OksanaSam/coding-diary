@@ -1,5 +1,5 @@
 import React from 'react';
-import CardNew from './Card'
+import Card from './Card'
 
 
 
