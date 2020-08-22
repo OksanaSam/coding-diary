@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import firebaseConfig from "./components/firebaseConfig.jsx";
 import firebase from 'firebase/app';
 import SignInModal from './components/SignInModal';
-import styled, { css } from 'styled-components'
+// import styled, { css } from 'styled-components'
 
 
 const firebaseAppAuth = firebase.auth();
