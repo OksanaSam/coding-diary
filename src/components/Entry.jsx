@@ -19,13 +19,21 @@ const options = [
 const NewEntry = (props) => {
     const [isChecked, setChecked] = useState(false);
     const [textArea, setTextArea] = useState('');
-    const [selectedOption, setSelectedOption] = useState(options[0].value);
+    const [selectedOptions, setSelectedOptions] = useState(
+        localStorage.getItem('data') || []
+    );
+
     const [inputValue, setInputValue] = useState('');
     const [items, setItems] = useState([]);
 
     useEffect(() => {
         setChecked(props.isGlobalChecked); 
-    }, [props.isGlobalChecked]);
+        localStorage.setItem('data', JSON.stringify(selectedOptions));
+    }, [props.isGlobalChecked, selectedOptions]);
+
+
+   
+
 
     const handleChecked = () => {
         setChecked(!isChecked);
@@ -92,13 +100,28 @@ const NewEntry = (props) => {
         setItems(newItems);
     };
 
+    const handleSelect = (e) => {
+        if (selectedOptions.includes(e.target.value)) {
+            Swal.fire({
+                title: 'Hm...',
+                text: 'You have already added this tag!',
+                confirmButtonText: 'Ok',
+            });
+        } else {
+            localStorage.setItem('data', JSON.stringify(selectedOptions));
+            setSelectedOptions([...selectedOptions, e.target.value])
+        }
+    }
+
+    
+
     return (
         <>
             <select
                 name='tool'
                 id='tool'
-                value={selectedOption}
-                onChange={e => setSelectedOption(e.target.value)}>
+                value={selectedOptions}
+                onChange={handleSelect}>
                 {options.map(option => (
                     <option
                     key={option.value}
@@ -110,7 +133,16 @@ const NewEntry = (props) => {
                     </option>
             ))}
             </select>
-                <p className="selectedTool">{selectedOption}</p>
+            <ul>
+                {selectedOptions.map((option) => {return (
+                    <>
+                    <li key={selectedOptions.length}>{option}</li>
+                    {(selectedOptions.length > 0) ? <input type='checkbox' /> : null}
+                    </>
+                    )}
+                )}
+            </ul>
+                <p className="selectedTool">{selectedOptions}</p>
             <p>{props.item}</p>
             {/* <p>{props.currentDate ? `${props.currentDate.getMonth()} ${props.currentDate.getDate()} ${props.currentDate.getFullYear()}` : null}</p> */}
             <p>{props.currentDate ? format(props.currentDate, "do MMMM yyyy") : null}</p>
