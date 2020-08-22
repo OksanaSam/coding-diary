@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import firebaseConfig from "./components/firebaseConfig.jsx";
+import firebaseConfig from "./firebaseConfig.jsx";
 import firebase from 'firebase/app';
-import SignInModal from './components/SignInModal';
+import SignInModal from './SignInModal';
 // import styled, { css } from 'styled-components'
 
 
