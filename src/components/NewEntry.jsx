@@ -68,22 +68,54 @@ const NewEntry = (props) => {
     }
 
     
-    const handleCardSubmit = () => {
-        if (items.length < 1) {
+    const handleCardSubmit = async () => {
+        if (!props.user) {
+            Swal.fire({
+              title: 'Oops...',
+              text: 'Please sign in',
+              confirmButtonText: 'Ok',
+            })
+        } else if (items.length < 1) {
             Swal.fire({
                 title: 'Oops...',
                 text: 'Please add at least one entry!',
                 confirmButtonText: 'Ok',
             });
         } else {
-            const dbRef = firebase.database().ref(`users/${props.displayName}`);
-            const obj = { tags: selectedOptions, entries: items };
-            dbRef.push(obj);
+            const dbRef = await firebase.database().ref(`users/${props.user}`)
+            console.log(dbRef)
+            const obj = { tags: selectedOptions, entries: items }
+            if (dbRef === null) {
+                firebase.database().ref('users/' + props.user).set(obj)
+            } else {
+                dbRef.push(obj);
+            }
             console.log('added');
             setItems([]);
             setSelectedOptions([]);
+ 
+            dbRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+          
+                console.log('response from database', data);
+                
+                const entryList = [];
+                for (let key in data) {
+                  entryList.push({
+                    log: data[key],
+                    uniqueId: key
+                  });
+                }
+                props.handleCardsAdd(entryList)
+                // setItems(entryList)
+              })
         }
     }
+
+ 
+  
+      
+    
 
 
 

@@ -32,6 +32,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const [isSearching, setIsSearching] = useState(false);
   const debouncedItems = useDebounce(items, 500);
   const [displayName, setDisplayName] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     // trying context
   const selectOptions = {
@@ -44,13 +45,55 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const CheckboxContext = React.createContext(selectOptions.none);
   const value = useContext(CheckboxContext);
 
+
+  const handleUserChange = (newUser) => {
+    setUser(newUser)
+  }
+
+  const handleLogIn = () => {
+    setIsLoggedIn(true)
+  } 
+
+  // firebase.auth().onAuthStateChanged(user => {
+  //   if (user !== null) {
+  //     const dbUser = {
+  //       email: user.email,
+  //       displayName: user.displayName,
+  //       photoUrl: user.photoURL,
+  //       uid: user.uid
+  //     }
+  //     firebase.database().ref('users/' + user.uid).set(dbUser);
+  //     // setUser(firebase.auth().currentUser.displayName);
+  //     console.log(firebase.auth().currentUser);
+  //   } else {
+  //     console.log('no user');
+  //   }
+  // });
+
   
    useEffect(() => {
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user !== null) {
+        const dbUser = {
+          email: user.email,
+          displayName: user.displayName,
+          photoUrl: user.photoURL,
+          uid: user.uid
+        }
+        firebase.database().ref('users/' + user.uid).set(dbUser);
+        console.log(firebase.auth().currentUser);
+        setUser(firebase.auth().currentUser.displayName);
+      } else {
+        console.log('no user');
+      }
+    });
+  
     let dbRef;
-    if (!user) {
-      dbRef = firebase.database().ref(`users/Oksana Posobchuk`);
+    if (user === null) {
+      dbRef = firebase.database().ref(`users/Oksana Samokhvalova`);
     } else {
-      dbRef = firebase.database().ref(`users/${user.displayName}`);
+      dbRef = firebase.database().ref(`users/${user}`);
     }
     dbRef.on('value', (snapshot) => {
       const data = snapshot.val();
@@ -66,40 +109,11 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
       }
       setItems(entryList);
     })
-  }, [user]);
+  }, [user, isLoggedIn]);
 
   const handleGlobalChecked = () => {
     setGlobalCheckbox(!globalCheckbox);
   }
-
-
-  const addEntry = async (entry) => {
-    if (!user) {
-      Swal.fire({
-        title: 'Oops...',
-        text: 'Please sign in',
-        confirmButtonText: 'Ok',
-      });
-    } else {
-    const dbRef = await firebase.database().ref(`users/${user.displayName}`);
-    dbRef.push(entry);
-    dbRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-
-      console.log('response from database', data);
-      
-      const entryList = [];
-      for (let key in data) {
-        entryList.push({
-          log: data[key],
-          uniqueId: key
-        });
-      }
-      setItems(entryList);
-    })
-    }
-  };
-
 
   const handleDateChange = date => {
     setDate(date);
@@ -112,13 +126,18 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   }
   // const Entries = React.lazy(() => import('./Entries'));
   
+  const handleCardsAdd = (newItems) => {
+    setItems(newItems);
+  }
 
   return (
     <div className="App">
       <>
       <header>
         <Authentication
-          displayName = {displayName}
+          handleLogIn={handleLogIn}
+          displayName={displayName}
+          handleUserChange={handleUserChange}
           user={user}
           signInWithEmailAndPassword={signInWithEmailAndPassword}
           createUserWithEmailAndPassword={createUserWithEmailAndPassword}
@@ -140,6 +159,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
 
         <NewEntry
           // selectedDate={selectedDate}
+          handleCardsAdd={handleCardsAdd}
           currentDate={currentDate}
           displayName={displayName}
           user={user}
@@ -147,7 +167,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
           handleDateSelect={handleDateSelect}
           item='new entry'
           isGlobalChecked={globalCheckbox}
-          addEntry={addEntry}
+          // addEntry={addEntry}
         />
 
         <Cards 

@@ -14,7 +14,15 @@ const Cards = (props) => {
     const handleCardEdit = (id) => {
         console.log('edited', id)
         const dbRef = firebase.database().ref(`users/${props.displayName}`);
-        // dbRef.child(id).remove();
+        dbRef.once('value', (snapshot) => {
+            const data = snapshot.val();
+            console.log(data)
+            // if (data[id].isRead) {
+            //   dbRef.child(index).update({isRead: false});
+            // } else {
+            //   dbRef.child(index).update({isRead: true});
+            // }
+          });
     }
 
     // const handleDelete = (index) => {
@@ -39,7 +47,7 @@ const Cards = (props) => {
                     return (
                         <li className="listResult" key={item.uniqueId}>
                             <CardNew
-                                log={item.log}
+                                item={item}
                             />
                             <button onClick={()=> handleCardEdit(item.uniqueId)}>edit</button>
                             <button onClick={()=> handleCardDelete(item.uniqueId)}>delete</button>

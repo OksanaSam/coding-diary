@@ -19,19 +19,31 @@ const Authentication = (props) => {
     const [modalIsOpen, setIsOpen] = useState(false);
     const [email, setEmail] = useState('hello@hh');
 
-    useEffect(({ displayName } = props) => {
-      setDisplayNameTwo(displayName)
-    }, [props.displayName])
+    // useEffect(({ displayName } = props) => {
+    //   setDisplayNameTwo(displayName)
+    // }, [props.displayName])
 
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user !== null) {
-        setUser(firebase.auth().currentUser);
-        // setDisplayName()
-        console.log(firebase.auth().currentUser.displayName);
-      } else {
-        console.log('no user');
-      }
-    });
+    // firebase.auth().onAuthStateChanged(user => {
+    //   if (user !== null) {
+    //     const dbUser = {
+    //       email: user.email,
+    //       displayName: user.displayName,
+    //       photoUrl: user.photoURL,
+    //       uid: user.uid
+    //     }
+    //     firebase.database().ref('users/' + user.uid).set(dbUser);
+    //     // setUser(firebase.auth().currentUser.displayName);
+    //     props.handleUserChange(firebase.auth().currentUser.displayName)
+
+    //     // setDisplayName()
+    //     console.log(firebase.auth().currentUser.displayName);
+    //   } else {
+    //     console.log('no user');
+    //   }
+    // });
+
+
+  
 
     const openModal = () => {
         setIsOpen(true);
@@ -47,7 +59,10 @@ const Authentication = (props) => {
         .signOut()
         .then(function() {
            console.log('Signout Succesfull')
-           setUser(null);
+          //  setUser(null);
+           props.handleUserChange(null)
+           props.handleLogIn(false)
+           
      
         }, function(error) {
            console.log('Signout Failed')  
@@ -63,11 +78,14 @@ const Authentication = (props) => {
             const token = result.credential.accessToken;
             console.log(result.user.email);
       
-            const newUser = result.user;
+            const newUser = result.user.displayName;
             console.log('signed in');
+            console.log('newUser', newUser);
             setIsOpen(false);
-            setDisplayNameTwo(result.user.displayName);
-            setUser(newUser);
+            // setDisplayNameTwo(result.user.displayName);
+            // setUser({...user, display: result.user.displayName});
+            // props.handleUserChange(result.user.displayName)
+            props.handleLogIn(true)
             // setToken(result.user.email)
          }).catch(function(error) {
             const errorCode = error.code;
@@ -199,10 +217,10 @@ const Authentication = (props) => {
           <>
           <p>Authentication</p>
           {
-            user 
-              ? 
+            (props.user !== null) 
+              ?   
               (<div>
-                <p>Hello, {displayNameTwo}</p>
+                <p>Hello, {props.user}</p>
                 <button onClick={signOut}>Sign out</button>
               </div>)
               : <button onClick={openModal}>Please sign in</button>
