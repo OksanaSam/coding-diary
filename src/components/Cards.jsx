@@ -7,13 +7,13 @@ const Cards = (props) => {
 
     const handleCardDelete = (id) => {
         console.log('deleted', id)
-        const dbRef = firebase.database().ref(`users/${props.displayName}`);
+        const dbRef = firebase.database().ref(`users/${props.user}`);
         dbRef.child(id).remove();
     }
 
     const handleCardEdit = (id) => {
         console.log('edited', id)
-        const dbRef = firebase.database().ref(`users/${props.displayName}`);
+        const dbRef = firebase.database().ref(`users/${props.user}`);
         dbRef.once('value', (snapshot) => {
             const data = snapshot.val();
             console.log(data)

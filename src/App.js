@@ -81,7 +81,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
           photoUrl: user.photoURL,
           uid: user.uid
         }
-        firebase.database().ref('users/' + user.uid).set(dbUser);
+        firebase.database().ref(`users/${user.uid}`).set(dbUser);
         console.log(firebase.auth().currentUser);
         setUser(firebase.auth().currentUser.displayName);
       } else {
@@ -124,6 +124,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
     setDate(date);
     // console.log(selectedDate)
   }
+
   // const Entries = React.lazy(() => import('./Entries'));
   
   const handleCardsAdd = (newItems) => {
@@ -167,12 +168,11 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
           handleDateSelect={handleDateSelect}
           item='new entry'
           isGlobalChecked={globalCheckbox}
-          // addEntry={addEntry}
         />
 
         <Cards 
           items={items}
-          displayName={displayName}
+          user={user}
         />
         <ColorPicker />
 			 </>
