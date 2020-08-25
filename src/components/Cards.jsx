@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import CardNew from './Card'
 import firebase from 'firebase/app';
+import { UserContext } from '../App'
 
 
 const Cards = (props) => {
+
+    const newUser = useContext(UserContext);
 
     const handleCardDelete = (id) => {
         console.log('deleted', id)
@@ -39,6 +42,7 @@ const Cards = (props) => {
     // };
     return (
         <>
+           
             {
                 props.items.length
                 ?
@@ -55,8 +59,10 @@ const Cards = (props) => {
                     );
                     })}
                 </ul>
+                
                 :  <p>Loading...</p>
             }
+            <p>{newUser}</p>
         </>
     )
 }

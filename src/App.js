@@ -12,6 +12,9 @@ import Cards from './components/Cards';
 import ColorPicker from './components/ColorPicker';
 import Swal from "sweetalert2";
 
+export const UserContext = React.createContext();
+
+// const user = useContext(UserContext);
 
 
 const firebaseAppAuth = firebase.auth();
@@ -27,7 +30,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const [currentDate, setDate] = useState(new Date());
   const [selectedDate, setSeletedDate] = useState();
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState();
   const [isSearching, setIsSearching] = useState(false);
   const debouncedItems = useDebounce(items, 500);
@@ -42,16 +45,14 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   };
 
   const [checkboxCounter, setCheckboxCounter] = useState(0);
-  const CheckboxContext = React.createContext(selectOptions.none);
-  const value = useContext(CheckboxContext);
 
 
   const handleUserChange = (newUser) => {
     setUser(newUser)
   }
 
-  const handleLogIn = () => {
-    setIsLoggedIn(true)
+  const handleLogIn = (boolean) => {
+    setIsLoggedIn(boolean)
   } 
 
   // firebase.auth().onAuthStateChanged(user => {
@@ -74,6 +75,8 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
    useEffect(() => {
 
     firebase.auth().onAuthStateChanged(user => {
+      // !isLoggedIn && setUser(null);
+
       if (user !== null) {
         const dbUser = {
           email: user.email,
@@ -88,7 +91,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
         console.log('no user');
       }
     });
-  
+    
     let dbRef;
     if (user === null) {
       dbRef = firebase.database().ref(`users/Oksana Samokhvalova`);
@@ -175,7 +178,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
           user={user}
         />
         <ColorPicker />
-			 </>
+    </>
     </div>
   );
 }
