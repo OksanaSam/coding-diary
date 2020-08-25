@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import firebaseConfig from "./firebaseConfig.jsx";
 import firebase from 'firebase/app';
 import SignInModal from './SignInModal';
+import { UserContext } from '../App'
 // import styled, { css } from 'styled-components'
 
 
@@ -14,6 +15,9 @@ const providers = {
 
 
 const Authentication = (props) => {
+
+  const newUser = useContext(UserContext);
+
     const [user, setUser] = useState(props.user);
     const [displayNameTwo, setDisplayNameTwo] = useState(null);
     const [modalIsOpen, setIsOpen] = useState(false);
@@ -84,7 +88,6 @@ const Authentication = (props) => {
             setIsOpen(false);
             // setDisplayNameTwo(result.user.displayName);
             // setUser({...user, display: result.user.displayName});
-            // props.handleUserChange(result.user.displayName)
             props.handleLogIn(true)
             // setToken(result.user.email)
          }).catch(function(error) {
