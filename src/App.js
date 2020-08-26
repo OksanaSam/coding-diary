@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, lazy, Suspense } from 'react';
+import React, { useContext, useState, useEffect, useReducer, lazy, Suspense } from 'react';
 import './App.css';
 import NewEntry from './components/NewEntry.jsx';
 import firebaseConfig from './components/firebaseConfig.jsx';
@@ -13,9 +13,6 @@ import ColorPicker from './components/ColorPicker';
 import Swal from "sweetalert2";
 
 export const UserContext = React.createContext();
-
-// const user = useContext(UserContext);
-
 
 const firebaseAppAuth = firebase.auth();
 
@@ -37,6 +34,8 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const [displayName, setDisplayName] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const [fake, setFake] = useState(null);
+
     // trying context
   const selectOptions = {
     all: false,
@@ -49,6 +48,12 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
 
   const handleUserChange = (newUser) => {
     setUser(newUser)
+  }
+
+
+  const handleDisplayName = (newDisplayName) => {
+    setDisplayName(newDisplayName)
+    localStorage.setItem('displayName', JSON.stringify(newDisplayName))
   }
 
   const handleLogIn = (boolean) => {
@@ -80,13 +85,12 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
       if (user !== null) {
         const dbUser = {
           email: user.email,
-          displayName: user.displayName,
+          displayName: user.displayName ? user.displayName : user.email,
           photoUrl: user.photoURL,
           uid: user.uid
         }
-        firebase.database().ref(`users/${user.uid}`).set(dbUser);
-        console.log(firebase.auth().currentUser);
-        setUser(firebase.auth().currentUser.displayName);
+        setUser(user.uid);
+        setFake(dbUser);
       } else {
         console.log('no user');
       }
@@ -96,7 +100,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
     if (user === null) {
       dbRef = firebase.database().ref(`users/Oksana Samokhvalova`);
     } else {
-      dbRef = firebase.database().ref(`users/${user}`);
+      dbRef = firebase.database().ref(`users/${firebase.auth().currentUser.uid}`);
     }
     dbRef.on('value', (snapshot) => {
       const data = snapshot.val();
@@ -112,6 +116,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
       }
       setItems(entryList);
     })
+
   }, [user, isLoggedIn]);
 
   const handleGlobalChecked = () => {
@@ -134,17 +139,23 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
     setItems(newItems);
   }
 
+  // const [user, dispatch] = useReducer(reducer, initialState);
+
   return (
+    // < UserContext.Provider value={{ userState: user, userDispatch: dispatch }}>
+    // <UserContext.Provider value={{ user }}>
     <div className="App">
-      <>
+     <>
       <header>
         <Authentication
           handleLogIn={handleLogIn}
           displayName={displayName}
           handleUserChange={handleUserChange}
+          handleDisplayName={handleDisplayName}
           user={user}
           signInWithEmailAndPassword={signInWithEmailAndPassword}
           createUserWithEmailAndPassword={createUserWithEmailAndPassword}
+          fake={fake}
         />
       </header>
 
@@ -180,6 +191,7 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
         <ColorPicker />
     </>
     </div>
+   
   );
 }
 

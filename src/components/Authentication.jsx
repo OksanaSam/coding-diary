@@ -73,31 +73,87 @@ const Authentication = (props) => {
         });
      }
 
-     const googleSignin = () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-         firebase
-         .auth()
-         .signInWithPopup(provider)
-         .then(function(result) {
-            const token = result.credential.accessToken;
-            console.log(result.user.email);
+
+    //  new firebase.auth.GoogleAuthProvider()
+
+     const twitterGoogleSignIn = (enteredProvider) => {
+        const provider = enteredProvider;
+        firebase
+        .auth()
+        .signInWithPopup(provider)
+        .then(function(result) {
+          const token = result.credential.accessToken;
+          console.log(result.user.email);
+    
+          const newUser = result.user.displayName;
+          console.log('signed in');
+          console.log('newUser', newUser);
+          setIsOpen(false);
+          // setDisplayNameTwo(result.user.displayName);
+          // setUser({...user, display: result.user.displayName});
+          props.handleLogIn(true)
+          // setToken(result.user.email)
+        }).catch(function(error) {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+            
+          console.log(error.code)
+          console.log(error.message)
+        });
+     }
+
+    //  const googleSignin = () => {
+    //     const provider = new firebase.auth.GoogleAuthProvider();
+    //     new firebase.auth.TwitterAuthProvider()
+    //      firebase
+    //      .auth()
+    //      .signInWithPopup(provider)
+    //      .then(function(result) {
+    //         const token = result.credential.accessToken;
+    //         console.log(result.user.email);
       
-            const newUser = result.user.displayName;
-            console.log('signed in');
-            console.log('newUser', newUser);
-            setIsOpen(false);
-            // setDisplayNameTwo(result.user.displayName);
-            // setUser({...user, display: result.user.displayName});
-            props.handleLogIn(true)
-            // setToken(result.user.email)
-         }).catch(function(error) {
-            const errorCode = error.code;
-            const errorMessage = error.message;
+    //         const newUser = result.user.displayName;
+    //         console.log('signed in');
+    //         console.log('newUser', newUser);
+    //         setIsOpen(false);
+    //         // setDisplayNameTwo(result.user.displayName);
+    //         // setUser({...user, display: result.user.displayName});
+    //         props.handleLogIn(true)
+    //         // setToken(result.user.email)
+    //      }).catch(function(error) {
+    //         const errorCode = error.code;
+    //         const errorMessage = error.message;
               
-            console.log(error.code)
-            console.log(error.message)
-         });
-      }
+    //         console.log(error.code)
+    //         console.log(error.message)
+    //      });
+    //   }
+
+
+      // const handleTwitterLogin = () => {
+      //   const provider = new firebase.auth.TwitterAuthProvider();
+      //   firebase
+      //     .auth()
+      //     .signInWithPopup(provider)
+      //     .then(function(result) {
+      //       const token = result.credential.accessToken;
+      //       const secret = result.credential.secret;
+      //       setIsOpen(false);
+      //       props.handleLogIn(true);
+
+      //     })
+      //     .catch(function(error) {
+      //       // Handle Errors here.
+      //       console.log('error', error)
+      //       const errorCode = error.code;
+      //       const errorMessage = error.message;
+      //       // The email of the user's account used.
+      //       const email = error.email;
+      //       // The firebase.auth.AuthCredential type that was used.
+      //       const credential = error.credential;
+      //       // ...
+      //     });
+      // }
 
     const actionCodeSettings = {
         url: 'https://localhost:3000/',
@@ -156,12 +212,14 @@ const Authentication = (props) => {
           .then(function(result) {
             // const token = result.credential.accessToken;
             const userDisplayName = result.additionalUserInfo.username;
-            const newUser = result.user.u.uid;
-            console.log(userDisplayName, result.user.uid);
-            setUser(userDisplayName);
-            setDisplayNameTwo(userDisplayName);
+            // const newUser = result.user.u.uid;
+            // console.log(firebase.auth().currentUser.additionalUserInfo.username);
+            // console.log(userDisplayName);
             setIsOpen(false);
-
+            props.handleLogIn(true);
+            props.handleDisplayName(userDisplayName);
+            console.log('fake', JSON.stringify(props.fake.displayName))
+            // localStorage.setItem('displayName', JSON.stringify(userDisplayName))
           })
           .catch(function(error) {
             const errorCode = error.code;
@@ -182,10 +240,9 @@ const Authentication = (props) => {
           .then(function(result) {
             const token = result.credential.accessToken;
             const secret = result.credential.secret;
-            const newUser = result.user;
-            setDisplayNameTwo(newUser.displayName);
-            setUser(newUser);
             setIsOpen(false);
+            props.handleLogIn(true);
+
           })
           .catch(function(error) {
             // Handle Errors here.
@@ -215,6 +272,9 @@ const Authentication = (props) => {
 //             color: white;
 //       `};
 // `
+// console.log(newUser.user)
+console.log('fake', JSON.stringify(props.fake))
+
 
       return (
           <>
@@ -223,7 +283,16 @@ const Authentication = (props) => {
             (props.user !== null) 
               ?   
               (<div>
-                <p>Hello, {props.user}</p>
+                {(props.fake) ?
+                (
+                <div>
+                  <p>Hello Fake {props.fake.displayName}</p>
+                  <img src={props.fake.photoUrl} alt=""/>
+                </div>
+                )
+                : null}
+                <p>Hello, { firebase.auth().currentUser.displayName || JSON.parse(localStorage.getItem('displayName')) }</p>
+                {/* <img src={newUser.user} alt=""/> */}
                 <button onClick={signOut}>Sign out</button>
               </div>)
               : <button onClick={openModal}>Please sign in</button>
@@ -231,9 +300,9 @@ const Authentication = (props) => {
            <SignInModal
                 modalIsOpen={modalIsOpen}
                 closeModal={closeModal}
-                googleSignin={googleSignin}
+                googleSignin={twitterGoogleSignIn(new firebase.auth.GoogleAuthProvider())}
                 handleGitHubLogin={handleGitHubLogin}
-                handleTwitterLogin={handleTwitterLogin}
+                handleTwitterLogin={twitterGoogleSignIn(new firebase.auth.TwitterAuthProvider())}
                 signInWithEmailAndPassword={props.signInWithEmailAndPassword}
                 createUserWithEmailAndPassword={props.createUserWithEmailAndPassword}
             />

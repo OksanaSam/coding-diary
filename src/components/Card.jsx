@@ -16,15 +16,15 @@ const CardNew = (props) => {
 
     }
 
-    console.log(JSON.stringify(props.item.log.entries))
-    console.log(JSON.stringify(props.item.log.tags))
-    console.log(JSON.stringify(props.item.uniqueId))
+    // console.log(JSON.stringify(props.item.log.entries))
+    // console.log(JSON.stringify(props.item.log.tags))
+    // console.log(JSON.stringify(props.item.uniqueId))
     
     return (
         <StylesProvider injectFirst>
             <Card>
                 <ul className='tags'>
-                {props.item.log.tags.map(tag => {
+                {props.items.log.tags.map(tag => {
                     return (
                         <li key={props.item.log.tags.indexOf(tag)}>
                             {tag}
