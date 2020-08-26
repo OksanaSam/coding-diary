@@ -6,6 +6,10 @@ import { UserContext } from '../App'
 
 const Cards = (props) => {
 
+const handleConsole = () => {
+    console.log(newUser.user)
+}
+
     const newUser = useContext(UserContext);
 
     const handleCardDelete = (id) => {
@@ -50,11 +54,12 @@ const Cards = (props) => {
                     {props.items.map((item) => {
                     return (
                         <li className="listResult" key={item.uniqueId}>
-                            <CardNew
+                            {/* <CardNew
                                 item={item}
-                            />
+                            /> */}
                             <button onClick={()=> handleCardEdit(item.uniqueId)}>edit</button>
                             <button onClick={()=> handleCardDelete(item.uniqueId)}>delete</button>
+                            <button onClick={handleConsole}>console</button>
                         </li>
                     );
                     })}
@@ -62,7 +67,7 @@ const Cards = (props) => {
                 
                 :  <p>Loading...</p>
             }
-            <p>{newUser}</p>
+            {/* <p>{newUser.user.displayName}</p> */}
         </>
     )
 }
