@@ -1,187 +1,95 @@
-import React, { useState, useEffect, useContext} from 'react';
-import firebaseConfig from "./firebaseConfig.jsx";
+import React, { useState, useContext} from 'react';
 import firebase from 'firebase/app';
 import SignInModal from './SignInModal';
 import { UserContext } from '../App'
-// import styled, { css } from 'styled-components'
-
-
-const firebaseAppAuth = firebase.auth();
-
-const providers = {
-  googleProvider: new firebase.auth.GoogleAuthProvider(),
-  
-};
 
 
 const Authentication = (props) => {
-
   const newUser = useContext(UserContext);
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState('hello@hh');
 
-    const [user, setUser] = useState(props.user);
-    const [displayNameTwo, setDisplayNameTwo] = useState(null);
-    const [modalIsOpen, setIsOpen] = useState(false);
-    const [email, setEmail] = useState('hello@hh');
+  const openModal = () => {
+      setIsOpen(true);
+  }
 
-    // useEffect(({ displayName } = props) => {
-    //   setDisplayNameTwo(displayName)
-    // }, [props.displayName])
+  const closeModal = () => {
+      setIsOpen(false);
+  }
 
-    // firebase.auth().onAuthStateChanged(user => {
-    //   if (user !== null) {
-    //     const dbUser = {
-    //       email: user.email,
-    //       displayName: user.displayName,
-    //       photoUrl: user.photoURL,
-    //       uid: user.uid
-    //     }
-    //     firebase.database().ref('users/' + user.uid).set(dbUser);
-    //     // setUser(firebase.auth().currentUser.displayName);
-    //     props.handleUserChange(firebase.auth().currentUser.displayName)
-
-    //     // setDisplayName()
-    //     console.log(firebase.auth().currentUser.displayName);
-    //   } else {
-    //     console.log('no user');
-    //   }
-    // });
-
-
-  
-
-    const openModal = () => {
-        setIsOpen(true);
+  const signOut = () => {
+      firebase
+      .auth()
+      .signOut()
+      .then(function() {
+          props.handleUserChange(null);
+          props.handleLogIn(false);
+      }, function(error) {
+          console.log('Signout Failed')
+      });
     }
 
-    const closeModal = () => {
-        setIsOpen(false);
-    }
-
-    const signOut = () => {
-        firebase
-        .auth()
-        .signOut()
-        .then(function() {
-           console.log('Signout Succesfull')
-          //  setUser(null);
-           props.handleUserChange(null)
-           props.handleLogIn(false)
-           
-     
-        }, function(error) {
-           console.log('Signout Failed')  
-        });
-     }
-
-
-    //  new firebase.auth.GoogleAuthProvider()
-
-     const twitterGoogleSignIn = (enteredProvider) => {
-        const provider = enteredProvider;
-        firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(function(result) {
-          const token = result.credential.accessToken;
-          console.log(result.user.email);
-    
-          const newUser = result.user.displayName;
-          console.log('signed in');
-          console.log('newUser', newUser);
-          setIsOpen(false);
-          // setDisplayNameTwo(result.user.displayName);
-          // setUser({...user, display: result.user.displayName});
-          props.handleLogIn(true)
-          // setToken(result.user.email)
-        }).catch(function(error) {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-            
-          console.log(error.code)
-          console.log(error.message)
-        });
-     }
-
-    //  const googleSignin = () => {
-    //     const provider = new firebase.auth.GoogleAuthProvider();
-    //     new firebase.auth.TwitterAuthProvider()
-    //      firebase
-    //      .auth()
-    //      .signInWithPopup(provider)
-    //      .then(function(result) {
-    //         const token = result.credential.accessToken;
-    //         console.log(result.user.email);
-      
-    //         const newUser = result.user.displayName;
-    //         console.log('signed in');
-    //         console.log('newUser', newUser);
-    //         setIsOpen(false);
-    //         // setDisplayNameTwo(result.user.displayName);
-    //         // setUser({...user, display: result.user.displayName});
-    //         props.handleLogIn(true)
-    //         // setToken(result.user.email)
-    //      }).catch(function(error) {
-    //         const errorCode = error.code;
-    //         const errorMessage = error.message;
-              
-    //         console.log(error.code)
-    //         console.log(error.message)
-    //      });
-    //   }
-
-
-      // const handleTwitterLogin = () => {
-      //   const provider = new firebase.auth.TwitterAuthProvider();
-      //   firebase
-      //     .auth()
-      //     .signInWithPopup(provider)
-      //     .then(function(result) {
-      //       const token = result.credential.accessToken;
-      //       const secret = result.credential.secret;
-      //       setIsOpen(false);
-      //       props.handleLogIn(true);
-
-      //     })
-      //     .catch(function(error) {
-      //       // Handle Errors here.
-      //       console.log('error', error)
-      //       const errorCode = error.code;
-      //       const errorMessage = error.message;
-      //       // The email of the user's account used.
-      //       const email = error.email;
-      //       // The firebase.auth.AuthCredential type that was used.
-      //       const credential = error.credential;
-      //       // ...
-      //     });
-      // }
-
-    const actionCodeSettings = {
-        url: 'https://localhost:3000/',
-        handleCodeInApp: true,
-        dynamicLinkDomain: 'https://localhost:3000/'
-    };
-
-    firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
-        .then(function() {
-            window.localStorage.setItem('emailForSignIn', email);
-        })
-        .catch(function(error) {
-            // Some error occurred, you can inspect the code: error.code
+  const twitterGoogleSignIn = (enteredProvider) => {
+    const provider = enteredProvider;
+    firebase
+    .auth()
+    .signInWithPopup(provider)
+    .then(function(result) {
+      const token = result.credential.accessToken;
+      setIsOpen(false);
+      props.handleLogIn(true);
+    }).catch(function(error) {
+      console.log('error', error.code, error.message, error.credential)
     });
+  }
 
-    if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
-    let email = window.localStorage.getItem('emailForSignIn');
-    if (!email) {
-      email = window.prompt('Please provide your email for confirmation');
-    }
-    firebase.auth().signInWithEmailLink(email, window.location.href)
-      .then(function(result) {
-        window.localStorage.removeItem('emailForSignIn');
+  const handleGitHubLogin = () => {
+  const provider = new firebase.auth.GithubAuthProvider();
+  provider.addScope('public_repo');
+  provider.addScope('read:org');
+  provider.addScope('read:user');
+  firebase
+    .auth()
+    .signInWithPopup(provider)
+    .then(function(result) {
+      setIsOpen(false);
+      props.handleLogIn(true);
+      props.handleDisplayName(result.additionalUserInfo.username);
+    })
+    .catch(function(error) {
+      console.log(error.code, error.message, error.email, error.credential)
+    });
+  }
+
+
+
+  const actionCodeSettings = {
+      url: 'https://localhost:3000/',
+      handleCodeInApp: true,
+      dynamicLinkDomain: 'https://localhost:3000/'
+  };
+
+  firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
+      .then(function() {
+          window.localStorage.setItem('emailForSignIn', email);
       })
       .catch(function(error) {
-        // Some error occurred, you can inspect the code: error.code
-      });
+          // Some error occurred, you can inspect the code: error.code
+  });
+
+  if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+  let email = window.localStorage.getItem('emailForSignIn');
+  if (!email) {
+    email = window.prompt('Please provide your email for confirmation');
   }
+  firebase.auth().signInWithEmailLink(email, window.location.href)
+    .then(function(result) {
+      window.localStorage.removeItem('emailForSignIn');
+    })
+    .catch(function(error) {
+      // Some error occurred, you can inspect the code: error.code
+    });
+}
 
 
     //Linking/re-authentication with email link
@@ -200,114 +108,37 @@ const Authentication = (props) => {
     //     // Some error occurred.
     // });
 
-
-    const handleGitHubLogin = () => {
-        const provider = new firebase.auth.GithubAuthProvider();
-        provider.addScope('public_repo');
-        provider.addScope('read:org');
-        provider.addScope('read:user');
-        firebase
-          .auth()
-          .signInWithPopup(provider)
-          .then(function(result) {
-            // const token = result.credential.accessToken;
-            const userDisplayName = result.additionalUserInfo.username;
-            // const newUser = result.user.u.uid;
-            // console.log(firebase.auth().currentUser.additionalUserInfo.username);
-            // console.log(userDisplayName);
-            setIsOpen(false);
-            props.handleLogIn(true);
-            props.handleDisplayName(userDisplayName);
-            console.log('fake', JSON.stringify(props.fake.displayName))
-            // localStorage.setItem('displayName', JSON.stringify(userDisplayName))
-          })
-          .catch(function(error) {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.email;
-            // The firebase.auth.AuthCredential type that was used.
-            const credential = error.credential;
-            // ...
-          });
-      }
-
-      const handleTwitterLogin = () => {
-        const provider = new firebase.auth.TwitterAuthProvider();
-        firebase
-          .auth()
-          .signInWithPopup(provider)
-          .then(function(result) {
-            const token = result.credential.accessToken;
-            const secret = result.credential.secret;
-            setIsOpen(false);
-            props.handleLogIn(true);
-
-          })
-          .catch(function(error) {
-            // Handle Errors here.
-            console.log('error', error)
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.email;
-            // The firebase.auth.AuthCredential type that was used.
-            const credential = error.credential;
-            // ...
-          });
-      }
-
-//       const Button = styled.button`
-//         background: transparent;
-//         border-radius: 3px;
-//         border: 2px solid blue;
-//         color: darkblue;
-//         margin: 0 1em;
-//         padding: 0.25em 1em;
-
-//         ${props =>
-//           props.primary &&
-//           css`
-//             background: blue;
-//             color: white;
-//       `};
-// `
-// console.log(newUser.user)
-console.log('fake', JSON.stringify(props.fake))
-
-
-      return (
-          <>
-          <p>Authentication</p>
-          {
-            (props.user !== null) 
-              ?   
-              (<div>
-                {(props.fake) ?
-                (
-                <div>
-                  <p>Hello Fake {props.fake.displayName}</p>
-                  <img src={props.fake.photoUrl} alt=""/>
-                </div>
-                )
-                : null}
-                <p>Hello, { firebase.auth().currentUser.displayName || JSON.parse(localStorage.getItem('displayName')) }</p>
-                {/* <img src={newUser.user} alt=""/> */}
-                <button onClick={signOut}>Sign out</button>
-              </div>)
-              : <button onClick={openModal}>Please sign in</button>
-          }
-           <SignInModal
-                modalIsOpen={modalIsOpen}
-                closeModal={closeModal}
-                googleSignin={twitterGoogleSignIn(new firebase.auth.GoogleAuthProvider())}
-                handleGitHubLogin={handleGitHubLogin}
-                handleTwitterLogin={twitterGoogleSignIn(new firebase.auth.TwitterAuthProvider())}
-                signInWithEmailAndPassword={props.signInWithEmailAndPassword}
-                createUserWithEmailAndPassword={props.createUserWithEmailAndPassword}
-            />
-          </>
-      )
-}
+    return (
+        <>
+        <p>Authentication</p>
+        {
+          (props.user !== null) 
+            ?   
+            (<div>
+              {(props.fake) ?
+              (
+              <div>
+                <p>Hello Fake {props.fake.displayName}</p>
+                <img src={props.fake.photoUrl} alt=""/>
+              </div>
+              )
+              : null}
+              <p>Hello, { firebase.auth().currentUser.displayName || JSON.parse(localStorage.getItem('displayName')) }</p>
+              <button onClick={signOut}>Sign out</button>
+            </div>)
+            : <button onClick={openModal}>Please sign in</button>
+        }
+          <SignInModal
+              modalIsOpen={modalIsOpen}
+              closeModal={closeModal}
+              googleSignin={()=>twitterGoogleSignIn(new firebase.auth.GoogleAuthProvider())}
+              handleGitHubLogin={handleGitHubLogin}
+              handleTwitterLogin={()=>twitterGoogleSignIn(new firebase.auth.TwitterAuthProvider())}
+              signInWithEmailAndPassword={props.signInWithEmailAndPassword}
+              createUserWithEmailAndPassword={props.createUserWithEmailAndPassword}
+          />
+        </>
+    )
+  }
 
 export default Authentication;

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useReducer, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useReducer, lazy, Suspense } from 'react';
 import './App.css';
 import NewEntry from './components/NewEntry.jsx';
 import firebaseConfig from './components/firebaseConfig.jsx';
@@ -10,22 +10,14 @@ import Authentication from './components/Authentication';
 import useDebounce from './use-debounce';
 import Cards from './components/Cards';
 import ColorPicker from './components/ColorPicker';
-import Swal from "sweetalert2";
 
 export const UserContext = React.createContext();
 
 const firebaseAppAuth = firebase.auth();
 
-// const providers = {
-//   googleProvider: new firebase.auth.GoogleAuthProvider(),
-  
-// };
-
-
 function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const [items, setItems] = useState([]);
   const [currentDate, setDate] = useState(new Date());
-  const [selectedDate, setSeletedDate] = useState();
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState();
@@ -33,15 +25,9 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const debouncedItems = useDebounce(items, 500);
   const [displayName, setDisplayName] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const [fake, setFake] = useState(null);
 
-    // trying context
-  const selectOptions = {
-    all: false,
-    some: false,
-    none: true
-  };
+
 
   const [checkboxCounter, setCheckboxCounter] = useState(0);
 
@@ -49,7 +35,6 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   const handleUserChange = (newUser) => {
     setUser(newUser)
   }
-
 
   const handleDisplayName = (newDisplayName) => {
     setDisplayName(newDisplayName)
@@ -60,28 +45,9 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
     setIsLoggedIn(boolean)
   } 
 
-  // firebase.auth().onAuthStateChanged(user => {
-  //   if (user !== null) {
-  //     const dbUser = {
-  //       email: user.email,
-  //       displayName: user.displayName,
-  //       photoUrl: user.photoURL,
-  //       uid: user.uid
-  //     }
-  //     firebase.database().ref('users/' + user.uid).set(dbUser);
-  //     // setUser(firebase.auth().currentUser.displayName);
-  //     console.log(firebase.auth().currentUser);
-  //   } else {
-  //     console.log('no user');
-  //   }
-  // });
-
-  
    useEffect(() => {
 
     firebase.auth().onAuthStateChanged(user => {
-      // !isLoggedIn && setUser(null);
-
       if (user !== null) {
         const dbUser = {
           email: user.email,
@@ -125,12 +91,10 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
 
   const handleDateChange = date => {
     setDate(date);
-    // console.log(selectedDate)
   }
 
   const handleDateSelect = date => {
     setDate(date);
-    // console.log(selectedDate)
   }
 
   // const Entries = React.lazy(() => import('./Entries'));
@@ -142,8 +106,6 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
   // const [user, dispatch] = useReducer(reducer, initialState);
 
   return (
-    // < UserContext.Provider value={{ userState: user, userDispatch: dispatch }}>
-    // <UserContext.Provider value={{ user }}>
     <div className="App">
      <>
       <header>
@@ -173,7 +135,6 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
         />
 
         <NewEntry
-          // selectedDate={selectedDate}
           handleCardsAdd={handleCardsAdd}
           currentDate={currentDate}
           displayName={displayName}
@@ -196,6 +157,5 @@ function App( {createUserWithEmailAndPassword, signInWithEmailAndPassword} ) {
 }
 
 export default withFirebaseAuth({
-  // providers,
   firebaseAppAuth,
 })(App);
