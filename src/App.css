@@ -1,11 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
 
 .App {
   text-align: center;
-  background-color: #161819;
+  background-color: #FDF7ED;
   color: #25C93F;
-  font-family: 'Roboto Mono', monospace;
+  /* font-family: 'Roboto Mono', monospace; */
+  font-family: 'Roboto Condensed', sans-serif;
+  font-weight: 700;
   /* font-family: 'Inconsolata', monospace; */
 }
 

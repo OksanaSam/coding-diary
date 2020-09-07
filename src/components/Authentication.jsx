@@ -118,7 +118,7 @@ const Authentication = (props) => {
               {(props.fake) ?
               (
               <div>
-                <p>Hello Fake {props.fake.displayName}</p>
+                <p>HELLO CONTACT Fake {props.fake.displayName}</p>
                 <img src={props.fake.photoUrl} alt=""/>
               </div>
               )
