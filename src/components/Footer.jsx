@@ -8,25 +8,11 @@ import {
   FaReact,
   FaRegCopyright,
 } from 'react-icons/fa';
-import Swal from 'sweetalert2';
 // * * * * Smooth Scroll Library
 import { animateScroll as scroll } from 'react-scroll';
-// import SelectLanguage from './SelectLanguage';
 
-const Footer = (props) => {
+function Footer() {
   const date = new Date().getFullYear();
-  const colorTheme = props.colorTheme;
-
-  const showAlert = (store) => {
-    Swal.fire({
-      title: 'Hang on for updates!',
-      imageWidth: 400,
-      imageHeight: 400,
-      confirmButtonColor: '#192B4D',
-      text: `The app will be soon available in ${store}!`,
-      confirmButtonText: 'Cool',
-    });
-  };
 
   const scrollToTop = () => {
     scroll.scrollToTop();
@@ -60,15 +46,7 @@ const Footer = (props) => {
               </a>
             </li>
             <li>
-              <a
-                href="https://github.com/OksanaSam/"
-                data-toggle="tooltip"
-                role="tooltip"
-                data-placement="top"
-                title="Some tooltip text!"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://github.com/OksanaSam/" target="_blank" rel="noopener noreferrer">
                 <FaGithub />
               </a>
             </li>
@@ -83,6 +61,6 @@ const Footer = (props) => {
       </div>
     </footer>
   );
-};
+}
 
 export default Footer;

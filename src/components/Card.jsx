@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
-import { StylesProvider } from '@material-ui/styles';
-// import Card from '@material-ui/core/Card';
 import firebase from 'firebase/app';
 import Swal from 'sweetalert2';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-
-import { makeStyles } from '@material-ui/core/styles';
-// import AddIcon from '@material-ui/icons/Add';
+import EditCardModal from './EditCardModal';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { ImCheckmark } from 'react-icons/im';
+import ReactTooltip from 'react-tooltip';
 
-const CardNew = (props) => {
-  const [show, setShow] = useState(false);
+function Card(props) {
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleCardDelete = (id) => {
     if (!props.user) {
@@ -29,7 +24,7 @@ const CardNew = (props) => {
   };
 
   const handleClose = () => {
-    setShow(false);
+    setShowEditModal(false);
   };
 
   const handleCardEdit = (id) => {
@@ -40,69 +35,72 @@ const CardNew = (props) => {
         confirmButtonText: 'Ok',
       });
     } else {
-      setShow(true);
-      console.log('edited', id);
-      const dbRef = firebase.database().ref(`users/${props.user}`);
-      dbRef.once('value', (snapshot) => {
-        const data = snapshot.val();
-        console.log(data);
-        // if (data[id].isRead) {
-        //   dbRef.child(index).update({isRead: false});
-        // } else {
-        //   dbRef.child(index).update({isRead: true});
-        // }
-      });
+      setShowEditModal(true);
     }
   };
 
-  // console.log(JSON.stringify(props.item.log.entries))
-  // console.log(JSON.stringify(props.item.log.tags))
-  // console.log(JSON.stringify(props.item.uniqueId))
-
   return (
-    <>
-      <div className="card">
-        <p>{!props.item.log.entryDate ? null : props.item.log.entryDate}</p>
-        {!props.item.log.tags ? null : (
-          <ul className="tags">
-            {props.item.log.tags.map((tag) => {
-              return <li key={props.item.log.tags.indexOf(tag)}>{tag}</li>;
-            })}
-          </ul>
-        )}
-        {!props.item.log.entries ? null : (
-          <ul className="entries">
-            {props.item.log.entries.map((entry) => {
-              return <li key={props.item.log.entries.indexOf(entry)}>{entry.text}</li>;
-            })}
-          </ul>
-        )}
-        {/* <p>{props.uniqueId}</p> */}
-        {/* <p>{JSON.stringify(props.item)}</p> */}
-        {/* <button>edit</button>
-                <button>delete</button> */}
-        <button className="editButton" onClick={() => handleCardEdit(props.item.uniqueId)}>
+    <div className="card">
+      <EditCardModal
+        handleClose={handleClose}
+        show={showEditModal}
+        item={props.item}
+        user={props.user}
+        uniqueId={props.item.uniqueId}
+      />
+      <div className="cardButtons">
+        <button
+          className="editButton"
+          onClick={() => handleCardEdit(props.item.uniqueId)}
+          data-tip
+          data-for="edit"
+        >
           <EditIcon />
+          <ReactTooltip id="edit">
+            <span>Edit entry</span>
+          </ReactTooltip>
         </button>
-        <button className="deleteButton" onClick={() => handleCardDelete(props.item.uniqueId)}>
+        <p data-tip data-for="date">
+          {!props.item.log.entryDate ? null : props.item.log.entryDate}
+        </p>
+        <ReactTooltip id="date">
+          <span>Date cannot be edited</span>
+        </ReactTooltip>
+        <button
+          className="deleteButton"
+          onClick={() => handleCardDelete(props.item.uniqueId)}
+          data-tip
+          data-for="delete"
+        >
           <DeleteIcon />
+          <ReactTooltip id="delete">
+            <span>Delete entry</span>
+          </ReactTooltip>
         </button>
       </div>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header>
-          <Modal.Title>Edit</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Footer>
-          <Button variant="primary">Save Changes</Button>
-          <Button variant="danger">Delete</Button>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+      {!props.item.log.tags ? null : (
+        <ul className="tags">
+          {props.item.log.tags.map((tag) => {
+            return <li key={props.item.log.tags.indexOf(tag)}>{tag}</li>;
+          })}
+        </ul>
+      )}
+      {!props.item.log.entries ? null : (
+        <ul className="entries">
+          {props.item.log.entries.map((entry) => {
+            return (
+              <li key={props.item.log.entries.indexOf(entry)}>
+                <span>
+                  <ImCheckmark />
+                </span>
+                {entry.text}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
   );
-};
+}
 
-export default CardNew;
+export default Card;

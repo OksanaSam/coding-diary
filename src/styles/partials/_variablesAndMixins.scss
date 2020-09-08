@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Mono&display=swap');
+
 $primaryFont: 'Roboto', sans-serif;
-$textColor: #172b4d;
-$headerTextColor: rgb(168, 168, 168);
+$secondaryFont: 'Roboto Mono', monospace;
+$textColor: white;
 
 @mixin flex($flexFlow, $justifyContent, $alignItems) {
   display: flex;

@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 
 function SelectedTools(props) {
   const options = [
-    { name: 'Select…', value: '' },
+    { name: 'Tags…', value: '' },
     { name: 'JavaScript', value: 'JavaScript' },
     { name: 'React', value: 'React' },
     { name: 'Vanilla', value: 'Vanilla' },
@@ -51,7 +51,7 @@ function SelectedTools(props) {
           ))}
         </select>
       </label>
-      <ul>
+      <ul className="selectedOptions">
         {props.selectedOptions.map((option, ind) => {
           return (
             <>

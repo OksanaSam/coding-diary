@@ -1,23 +1,13 @@
-import React, { useState, useEffect, useReducer, lazy, Suspense } from 'react';
-import { FaBars } from 'react-icons/fa';
-// import Authentication from './Authentication';
-import { MdAccountCircle } from 'react-icons/md';
+import React, { useState } from 'react';
 import { BsFileEarmarkCode } from 'react-icons/bs';
 import firebase from 'firebase/app';
 import SignInModal from './SignInModal';
+import Swal from 'sweetalert2';
 
 function Header(props) {
-  const [isClosed, setisClosed] = useState(true);
-
-  const [colorTheme, setColorTheme] = useState('blue');
-
-  const toggleColorTheme = () => {
-    setColorTheme((prevState) => (prevState === 'blue' ? 'pink' : 'blue'));
-  };
-
-  const [email, setEmail] = useState('hello@hh');
-
+  // Sign-In Modal
   const [modalIsOpen, setIsOpen] = useState(false);
+
   const openModal = () => {
     setIsOpen(true);
   };
@@ -26,36 +16,26 @@ function Header(props) {
     setIsOpen(false);
   };
 
-  const signOut = () => {
-    firebase
-      .auth()
-      .signOut()
-      .then(
-        function () {
-          props.handleUserChange(null);
-          props.handleLogIn(false);
-        },
-        function (error) {
-          console.log('Signout Failed');
-        }
-      );
-  };
-
+  // Sign In with Twitter and Google via Firebase
   const twitterGoogleSignIn = (enteredProvider) => {
     const provider = enteredProvider;
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(function (result) {
-        const token = result.credential.accessToken;
+      .then(() => {
         setIsOpen(false);
         props.handleLogIn(true);
       })
       .catch(function (error) {
-        console.log('error', error.code, error.message, error.credential);
+        Swal.fire({
+          title: 'Oops...',
+          text: `An error ${error.message} occurred`,
+          confirmButtonText: 'Ok',
+        });
       });
   };
 
+  // Sign In with GitHub via Firebase
   const handleGitHubLogin = () => {
     const provider = new firebase.auth.GithubAuthProvider();
     provider.addScope('public_repo');
@@ -64,14 +44,38 @@ function Header(props) {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(function (result) {
+      .then(() => {
         setIsOpen(false);
         props.handleLogIn(true);
-        props.handleDisplayName(result.additionalUserInfo.username);
       })
-      .catch(function (error) {
-        console.log(error.code, error.message, error.email, error.credential);
+      .catch((error) => {
+        Swal.fire({
+          title: 'Oops...',
+          text: `An error ${error.message} occurred`,
+          confirmButtonText: 'Ok',
+        });
       });
+  };
+
+  // Sign Out with all providers via Firebase
+  const signOut = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(
+        () => {
+          props.handleUserChange(null);
+          props.handleLogIn(false);
+          props.handleUserInfo(null);
+        },
+        (error) => {
+          Swal.fire({
+            title: 'Oops...',
+            text: `Signout failed, an error ${error.message} occurred`,
+            confirmButtonText: 'Ok',
+          });
+        }
+      );
   };
 
   return (
@@ -83,9 +87,7 @@ function Header(props) {
               <BsFileEarmarkCode />
               <p>CodingDiary</p>
             </div>
-            {/* <button className="toggle" onClick={props.toggleColorTheme}>Toggle</button> */}
-            <ul className={`menu ${isClosed ? null : 'open'}`}>
-              <li></li>
+            <ul className="menu">
               <li>
                 {props.user !== null ? (
                   <button onClick={signOut}>Sign out</button>
@@ -93,28 +95,12 @@ function Header(props) {
                   <button onClick={openModal}>Sign in</button>
                 )}
               </li>
-              {props.fake ? <img className="avatar" src={props.fake.photoUrl} alt="" /> : null}
+              {props.userInfo ? (
+                <img className="avatar" src={props.userInfo.photoUrl} alt="" />
+              ) : null}
             </ul>
-            <button className="hamburger" tabIndex="0" onClick={() => setisClosed(!isClosed)}>
-              <FaBars />
-            </button>
           </div>
         </nav>
-        {props.user !== null ? (
-          <div>
-            {props.fake ? (
-              <div>
-                <p>HELLO CONTACT Fake {props.fake.displayName}</p>
-                {/* <img src={props.fake.photoUrl} alt="" /> */}
-              </div>
-            ) : null}
-            <p>
-              Hello,{' '}
-              {firebase.auth().currentUser.displayName ||
-                JSON.parse(localStorage.getItem('displayName'))}
-            </p>
-          </div>
-        ) : null}
         <SignInModal
           modalIsOpen={modalIsOpen}
           closeModal={closeModal}

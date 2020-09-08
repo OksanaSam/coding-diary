@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
-// import styled, { css } from 'styled-components';
 import AddIcon from '@material-ui/icons/Add';
 import Swal from 'sweetalert2';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { format, compareAsc } from 'date-fns';
+import { format } from 'date-fns';
 import SelectedTools from './SelectedTools';
 
 const NewEntry = (props) => {
@@ -39,8 +38,6 @@ const NewEntry = (props) => {
         confirmButtonText: 'Ok',
       });
     } else {
-      // const newItems = [...items];
-      // newItems.push({ text: inputValue, done: false });
       setItems([...items, { text: inputValue, done: false }]);
       localStorage.setItem('items', JSON.stringify(items));
       setInputValue('');
@@ -62,13 +59,11 @@ const NewEntry = (props) => {
       });
     } else {
       const dbRef = await firebase.database().ref(`users/${props.user}`);
-      console.log(dbRef);
       const obj = {
         tags: selectedOptions,
         entries: items,
         entryDate: format(currentDate, 'do MMMM yyyy'),
       };
-      console.log(obj);
       if (dbRef === null) {
         firebase
           .database()
@@ -90,16 +85,9 @@ const NewEntry = (props) => {
           });
         }
         props.handleCardsAdd(entryList);
-        // setItems(entryList)
       });
     }
   };
-
-  // const handleClick = (index) => {
-  //   const newItems = [...items];
-  //   newItems[index].done = !newItems[index].done;
-  //   setItems(newItems);
-  // };
 
   const handleDelete = (index) => {
     const newItems = [...items];
@@ -108,9 +96,8 @@ const NewEntry = (props) => {
   };
 
   return (
-    <>
+    <div className="newEntry">
       <div className="selectedDate">
-        <p>{currentDate ? format(currentDate, 'do MMMM yyyy') : null}</p>
         <DatePicker
           styles={{ backgroundColor: 'blue' }}
           selected={currentDate}
@@ -122,6 +109,7 @@ const NewEntry = (props) => {
       <form onSubmit={handleInputSubmit}>
         <label htmlFor="entry">
           <input
+            placeholder="Skills learned"
             type="text"
             name="entry"
             value={inputValue}
@@ -132,7 +120,7 @@ const NewEntry = (props) => {
           <AddIcon />
         </button>
       </form>
-
+      <p>{currentDate ? format(currentDate, 'do MMMM yyyy') : null}</p>
       <ul>
         {items.map((item, id) => (
           <li key={id}>
@@ -141,8 +129,10 @@ const NewEntry = (props) => {
           </li>
         ))}
       </ul>
-      <button onClick={handleCardSubmit}>Save Entry</button>
-    </>
+      <button className="saveButton" onClick={handleCardSubmit}>
+        Save Entry
+      </button>
+    </div>
   );
 };
 

@@ -1,15 +1,17 @@
 .navigation {
+  background-image: linear-gradient(#17191c, #353a3f) !important;
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.2), 0 20px 40px rgba(0, 0, 0, 0.2),
+    0 40px 80px rgba(0, 0, 0, 0.4);
   position: sticky;
-  height: 10vh;
+  height: 12vh;
   top: 0;
   width: 100vw;
-  background-color: #fff;
   padding: 0.8rem;
-  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
+  color: $textColor;
 }
 
 .navWrapper {
-  max-width: 1200px;
+  max-width: 1400px;
   width: 90%;
   margin: 0 auto;
   @include flex(row nowrap, space-between, center);
@@ -17,11 +19,10 @@
 
 .brand {
   @include flex(row nowrap, space-between, center);
-  width: 24%;
+  width: 30%;
   font-size: clamp(1.2rem, 3vw, 2.5rem);
   font-family: $primaryFont;
   font-weight: 700;
-  color: $textColor;
   padding: 0 1rem;
   @media (max-width: 768px) {
     padding: 0;
@@ -32,86 +33,19 @@
   }
 }
 
-// .toggle {
-//   all: unset;
-//   font: 400 1rem $primaryFont;
-//   font: 400 1rem $primaryFont;
-//   letter-spacing: 1.3px;
-//   cursor: pointer;
-//   color: $textColor;
-// }
-
-.hamburger {
-  display: none;
-  font-size: 1.8rem;
-  border: none;
-  color: $textColor;
-  background-color: transparent;
-  @media (max-width: 768px) {
-    display: block;
-  }
-}
-
 .menu {
-  @include flex(row nowrap, center, center);
-  @media (max-width: 768px) {
-    display: none;
-  }
-  &.open {
-    @media (max-width: 768px) {
-      @include flex(column nowrap, center, flex-start);
-      width: 100%;
-    }
-  }
-}
-
-.menu li {
-  padding: 0 2rem;
-  margin: 0;
-  border-radius: 0.5rem;
-  @media (max-width: 768px) {
-    padding: 0;
-    margin-bottom: 0.8rem;
-  }
-  a {
-    font: 400 1rem $primaryFont;
-    letter-spacing: 1.3px;
-    color: $textColor;
+  @include flex(row nowrap, flex-end, center);
+  .menu li {
+    padding: 0 2rem;
     border-radius: 0.5rem;
-    font-size: 1.1rem;
-    padding: 1rem;
-    text-decoration: none;
-    text-transform: uppercase;
-    &:hover,
-    &:focus {
-      transition: all 0.2s;
-      background-color: #e6fbf6;
-    }
   }
-}
-
-.menu li:last-of-type {
-  padding: 0.5rem 1rem;
-  background-color: $textColor;
-  font-size: 1.2rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  &:hover,
-  &:focus {
-    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
-    background-color: darken($textColor, 10%);
+  .avatar {
+    border-radius: 30%;
+    width: 12%;
+    margin-left: 1rem;
   }
-  a {
-    color: #fff;
-    text-transform: uppercase;
-    &:hover,
-    &:focus {
-      color: #fff;
-      background-color: transparent;
-    }
+  button {
+    border-radius: 15%;
+    width: 6rem;
   }
-}
-
-.avatar {
-  width: 10%;
 }

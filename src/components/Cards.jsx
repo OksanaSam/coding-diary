@@ -1,21 +1,21 @@
 import React from 'react';
-import CardNew from './Card';
+import Card from './Card';
 
 function Cards(props) {
   return (
     <>
       {props.items ? (
-        <ul className="here">
+        <ul>
           {props.items.map((item) => {
             return (
-              <li className="listResult" key={item.uniqueId}>
-                <CardNew item={item} />
+              <li key={item.uniqueId}>
+                <Card item={item} user={props.user} />
               </li>
             );
           })}
         </ul>
       ) : (
-        <p>Loading...</p>
+        <p>No entries yet...</p>
       )}
     </>
   );

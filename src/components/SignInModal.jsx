@@ -1,60 +1,54 @@
 import React from 'react';
 import Modal from 'react-modal';
-import EmailPasswordForm from './EmailPasswordForm';
-import { FaTwitterSquare, FaGithub, FaGoogle } from 'react-icons/fa';
-// import styled, { css } from 'styled-components'
 
-// const Button = styled.button`
-//   background: transparent;
-//   border-radius: 3px;
-//   border: 2px solid blue;
-//   color: darkblue;
-//   margin: 0 1em;
-//   padding: 0.25em 1em;
-
-//   ${props =>
-//     props.primary &&
-//     css`
-//       background: blue;
-//       color: white;
-//     `};
-// `
+import { FaTwitterSquare, FaGithub, FaGoogle, FaWindowClose } from 'react-icons/fa';
 
 const SignInModal = (props) => {
-  function afterOpenModal() {}
-
   return (
     <>
       <Modal
+        style={{
+          overlay: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          },
+          content: {
+            background: 'white',
+            position: 'absolute',
+            top: '25%',
+            left: '25%',
+            right: '25%',
+            bottom: '25%',
+            border: '1px solid #ccc',
+            overflow: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            borderRadius: '10px',
+            outline: 'none',
+            padding: '20px',
+          },
+        }}
         isOpen={props.modalIsOpen}
         ariaHideApp={false}
-        onAfterOpen={afterOpenModal}
         onRequestClose={props.closeModal}
-        contentLabel="Example Modal"
+        contentLabel="SignIn Modal"
       >
-        <button onClick={props.closeModal}>close</button>
-        <button onClick={props.googleSignin}>
-          <FaGoogle />
+        <button className="closeModalButton" onClick={props.closeModal}>
+          <FaWindowClose />
         </button>
-        <button onClick={props.handleGitHubLogin}>
-          <FaGithub />
-        </button>
-        <button onClick={props.handleTwitterLogin}>
-          <FaTwitterSquare />
-        </button>
-
-        <div>
-          <p>OR</p>
-        </div>
-
-        <div>
-          <h1>sign in with email</h1>
-          <EmailPasswordForm onSubmit={props.signInWithEmailAndPassword} />
-        </div>
-
-        <div>
-          <h1>Don't have an account? Sign up</h1>
-          <EmailPasswordForm onSubmit={props.createUserWithEmailAndPassword} />
+        <h3>Sign in with Gmail, GitHub or Twitter</h3>
+        <div className="modalButtons">
+          <button className="gmailButton" onClick={props.googleSignin}>
+            <FaGoogle />
+          </button>
+          <button className="gitHubButton" onClick={props.handleGitHubLogin}>
+            <FaGithub />
+          </button>
+          <button className="twitterButton" onClick={props.handleTwitterLogin}>
+            <FaTwitterSquare />
+          </button>
         </div>
       </Modal>
     </>
