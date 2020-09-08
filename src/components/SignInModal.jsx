@@ -4,8 +4,6 @@ import EmailPasswordForm from './EmailPasswordForm';
 import { FaTwitterSquare, FaGithub, FaGoogle, FaFacebookSquare } from 'react-icons/fa';
 // import styled, { css } from 'styled-components'
 
-
-
 // const Button = styled.button`
 //   background: transparent;
 //   border-radius: 3px;
@@ -22,49 +20,48 @@ import { FaTwitterSquare, FaGithub, FaGoogle, FaFacebookSquare } from 'react-ico
 //     `};
 // `
 
-
-
-
 const SignInModal = (props) => {
-    function afterOpenModal() {
-    }
+  function afterOpenModal() {}
 
-    return (
-        <>
-        <Modal
-            isOpen={props.modalIsOpen}
-            ariaHideApp={false}
-            onAfterOpen={afterOpenModal}
-            onRequestClose={props.closeModal}
-            contentLabel="Example Modal"
-        >
+  return (
+    <>
+      <Modal
+        isOpen={props.modalIsOpen}
+        ariaHideApp={false}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={props.closeModal}
+        contentLabel="Example Modal"
+      >
         <button onClick={props.closeModal}>close</button>
-        <button onClick={props.googleSignin}><FaGoogle/></button>
-        <button onClick={() => console.log('facebook')}><FaFacebookSquare/></button>
-        <button onClick={props.handleGitHubLogin}><FaGithub/></button>
-        <button onClick={props.handleTwitterLogin}>< FaTwitterSquare/></button>
-        
+        <button onClick={props.googleSignin}>
+          <FaGoogle />
+        </button>
+        <button onClick={() => console.log('facebook')}>
+          <FaFacebookSquare />
+        </button>
+        <button onClick={props.handleGitHubLogin}>
+          <FaGithub />
+        </button>
+        <button onClick={props.handleTwitterLogin}>
+          <FaTwitterSquare />
+        </button>
 
         <div>
-            <p>OR</p>
+          <p>OR</p>
         </div>
 
         <div>
           <h1>sign in with email</h1>
-          <EmailPasswordForm
-            onSubmit={props.signInWithEmailAndPassword}
-          />
+          <EmailPasswordForm onSubmit={props.signInWithEmailAndPassword} />
         </div>
 
         <div>
           <h1>Don't have an account? Sign up</h1>
-          <EmailPasswordForm
-            onSubmit={props.createUserWithEmailAndPassword}  
-          />
+          <EmailPasswordForm onSubmit={props.createUserWithEmailAndPassword} />
         </div>
       </Modal>
-        </>
-    )
-}
+    </>
+  );
+};
 
 export default SignInModal;

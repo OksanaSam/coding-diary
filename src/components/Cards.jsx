@@ -49,6 +49,7 @@ const Cards = (props) => {
           {props.items.map((item) => {
             return (
               <li className="listResult" key={item.uniqueId}>
+                <p>hello</p>
                 {/* <CardNew
                                 item={item}
                             /> */}
