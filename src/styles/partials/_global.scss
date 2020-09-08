@@ -5,7 +5,7 @@
 
 .App {
   text-align: center;
-  background-color: #fdf7ed;
+  // background-color: #fdf7ed;
   color: #25c93f;
   /* font-family: 'Roboto Mono', monospace; */
   font-family: 'Roboto Condensed', sans-serif;
@@ -13,6 +13,33 @@
   /* font-family: 'Inconsolata', monospace; */
 }
 
+body {
+  background: #161616;
+  background-color: linear-gradient(145deg, #141414, #181818);
+}
+
 ul {
   list-style-type: none;
+}
+
+.wrapper {
+  max-width: 1200px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.card {
+  width: 50%;
+  // color: white;
+  border-radius: 43px;
+  background: #161616;
+  box-shadow: 24px 24px 48px #090909, -24px -24px 48px #232323;
+}
+
+.editButton {
+  color: #25c93f;
+}
+
+.deleteButton {
+  color: #ff5f55;
 }

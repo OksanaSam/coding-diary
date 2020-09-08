@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/app';
 // import styled, { css } from 'styled-components';
+import AddIcon from '@material-ui/icons/Add';
 import Swal from 'sweetalert2';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -8,8 +9,14 @@ import { format, compareAsc } from 'date-fns';
 import SelectedTools from './SelectedTools';
 
 const NewEntry = (props) => {
-  const [isChecked, setChecked] = useState(false);
-  const [textArea, setTextArea] = useState('');
+  const [currentDate, setDate] = useState(new Date());
+  const handleDateChange = (date) => {
+    setDate(date);
+  };
+
+  const handleDateSelect = (date) => {
+    setDate(date);
+  };
 
   const [selectedOptions, setSelectedOptions] = useState(
     JSON.parse(localStorage.getItem('selectedTools')) || []
@@ -19,21 +26,11 @@ const NewEntry = (props) => {
   const [items, setItems] = useState(JSON.parse(localStorage.getItem('items')) || []);
 
   useEffect(() => {
-    setChecked(props.globalCheckbox);
     localStorage.setItem('selectedTools', JSON.stringify(selectedOptions));
     localStorage.setItem('items', JSON.stringify(items));
-  }, [props.globalCheckbox, selectedOptions, items]);
+  }, [selectedOptions, items]);
 
-  const handleChecked = () => {
-    setChecked(!isChecked);
-  };
-
-  const handleTextAreaChange = (e) => {
-    setTextArea(e.target.value);
-    console.log(textArea);
-  };
-
-  const handleSubmit = (e) => {
+  const handleInputSubmit = (e) => {
     e.preventDefault();
     if (!inputValue) {
       Swal.fire({
@@ -66,7 +63,12 @@ const NewEntry = (props) => {
     } else {
       const dbRef = await firebase.database().ref(`users/${props.user}`);
       console.log(dbRef);
-      const obj = { tags: selectedOptions, entries: items };
+      const obj = {
+        tags: selectedOptions,
+        entries: items,
+        entryDate: format(currentDate, 'do MMMM yyyy'),
+      };
+      console.log(obj);
       if (dbRef === null) {
         firebase
           .database()
@@ -75,15 +77,11 @@ const NewEntry = (props) => {
       } else {
         dbRef.push(obj);
       }
-      console.log('added');
       setItems([]);
       setSelectedOptions([]);
 
       dbRef.on('value', (snapshot) => {
         const data = snapshot.val();
-
-        console.log('response from database', data);
-
         const entryList = [];
         for (let key in data) {
           entryList.push({
@@ -97,11 +95,11 @@ const NewEntry = (props) => {
     }
   };
 
-  const handleClick = (index) => {
-    const newItems = [...items];
-    newItems[index].done = !newItems[index].done;
-    setItems(newItems);
-  };
+  // const handleClick = (index) => {
+  //   const newItems = [...items];
+  //   newItems[index].done = !newItems[index].done;
+  //   setItems(newItems);
+  // };
 
   const handleDelete = (index) => {
     const newItems = [...items];
@@ -111,34 +109,35 @@ const NewEntry = (props) => {
 
   return (
     <>
+      <div className="selectedDate">
+        <p>{currentDate ? format(currentDate, 'do MMMM yyyy') : null}</p>
+        <DatePicker
+          styles={{ backgroundColor: 'blue' }}
+          selected={currentDate}
+          onChange={handleDateChange}
+          onSelect={handleDateSelect}
+        />
+      </div>
       <SelectedTools selectedOptions={selectedOptions} setSelectedOptions={setSelectedOptions} />
-      <p>{props.item}</p>
-      {/* <p>{props.currentDate ? `${props.currentDate.getMonth()} ${props.currentDate.getDate()} ${props.currentDate.getFullYear()}` : null}</p> */}
-      <p>{props.currentDate ? format(props.currentDate, 'do MMMM yyyy') : null}</p>
-      <input type="checkbox" onChange={() => handleChecked(props.item)} checked={isChecked} />
-      <button onClick={() => handleDelete(props.item)}>delete</button>
-      <DatePicker
-        styles={{ backgroundColor: 'blue' }}
-        selected={props.currentDate}
-        onChange={props.handleDateChange}
-        onSelect={props.handleDateSelect}
-      />
-
-      <form onSubmit={handleSubmit}>
-        <label>
-          <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
+      <form onSubmit={handleInputSubmit}>
+        <label htmlFor="entry">
+          <input
+            type="text"
+            name="entry"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+          />
         </label>
-        <button>Add</button>
+        <button>
+          <AddIcon />
+        </button>
       </form>
 
       <ul>
         {items.map((item, id) => (
           <li key={id}>
-            <label>
-              <input type="checkbox" checked={item.done} onClick={() => handleClick(id)} />
-              <span className={item.done ? 'done' : null}>{item.text}</span>
-              <button onClick={() => handleDelete(id)}>X</button>
-            </label>
+            <button onClick={() => handleDelete(id)}>X</button>
+            <span>{item.text}</span>
           </li>
         ))}
       </ul>

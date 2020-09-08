@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useReducer, lazy, Suspense } from 'react';
-import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import { FaBars } from 'react-icons/fa';
-import Authentication from './Authentication';
+// import Authentication from './Authentication';
+import { MdAccountCircle } from 'react-icons/md';
 import { BsFileEarmarkCode } from 'react-icons/bs';
 import firebase from 'firebase/app';
 import SignInModal from './SignInModal';
@@ -85,12 +85,7 @@ function Header(props) {
             </div>
             {/* <button className="toggle" onClick={props.toggleColorTheme}>Toggle</button> */}
             <ul className={`menu ${isClosed ? null : 'open'}`}>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-              <li>
-                <Link to="/info">About</Link>
-              </li>
+              <li></li>
               <li>
                 {props.user !== null ? (
                   <button onClick={signOut}>Sign out</button>
@@ -110,7 +105,7 @@ function Header(props) {
             {props.fake ? (
               <div>
                 <p>HELLO CONTACT Fake {props.fake.displayName}</p>
-                <img src={props.fake.photoUrl} alt="" />
+                {/* <img src={props.fake.photoUrl} alt="" /> */}
               </div>
             ) : null}
             <p>
@@ -118,11 +113,8 @@ function Header(props) {
               {firebase.auth().currentUser.displayName ||
                 JSON.parse(localStorage.getItem('displayName'))}
             </p>
-            <button onClick={signOut}>Sign out</button>
           </div>
-        ) : (
-          <button onClick={openModal}>Please sign in</button>
-        )}
+        ) : null}
         <SignInModal
           modalIsOpen={modalIsOpen}
           closeModal={closeModal}

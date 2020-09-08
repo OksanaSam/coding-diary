@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 import EmailPasswordForm from './EmailPasswordForm';
-import { FaTwitterSquare, FaGithub, FaGoogle, FaFacebookSquare } from 'react-icons/fa';
+import { FaTwitterSquare, FaGithub, FaGoogle } from 'react-icons/fa';
 // import styled, { css } from 'styled-components'
 
 // const Button = styled.button`
@@ -35,9 +35,6 @@ const SignInModal = (props) => {
         <button onClick={props.closeModal}>close</button>
         <button onClick={props.googleSignin}>
           <FaGoogle />
-        </button>
-        <button onClick={() => console.log('facebook')}>
-          <FaFacebookSquare />
         </button>
         <button onClick={props.handleGitHubLogin}>
           <FaGithub />

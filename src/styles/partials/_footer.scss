@@ -1,5 +1,9 @@
 footer {
+  // border-radius: 52px;
+  background: linear-gradient(145deg, #202020, #252727);
+  box-shadow: 27px 27px 54px #0e0e0e, -27px -27px 54px #383a3a;
   min-height: 17vh;
+  color: white;
   font: 400 1rem $primaryFont;
   letter-spacing: 1.3px;
   padding: 0.5rem 35px;
@@ -18,21 +22,6 @@ footer {
   }
 }
 
-// #language {
-//     appearance: none;
-//     cursor: pointer;
-//     border: none;
-//     border-bottom: 1px solid $headerTextColor;
-//     color: $headerTextColor;
-//     padding: 5px;
-//     letter-spacing: 1.2px;
-// }
-
-.languageSelect {
-  padding: 1rem;
-  width: 30rem;
-}
-
 .socials {
   width: 15%;
   display: flex;
@@ -40,12 +29,13 @@ footer {
   align-items: center;
   a {
     text-decoration: none;
-    color: $textColor;
+    color: white;
     font-size: 1.2rem;
     &:hover,
     &:focus {
       color: $textColor;
       transition: all 0.2s;
+      cursor: pointer;
     }
   }
   @media (max-width: 900px) {
@@ -53,19 +43,9 @@ footer {
   }
 }
 
-.appDl li {
-  display: inline-block;
-  &:first-of-type {
-    padding-right: 20px;
-  }
-  &:hover,
-  &:focus {
-    cursor: pointer;
-  }
-}
-
 .copyright {
   padding: 1rem;
+  color: white;
 }
 
 .subscribeText a {
@@ -77,4 +57,9 @@ footer {
     text-decoration: none;
     color: white;
   }
+}
+
+.scrollTop {
+  color: white;
+  cursor: pointer;
 }

@@ -37,27 +37,29 @@ function SelectedTools(props) {
 
   return (
     <>
-      <select name="tool" id="tool" value={props.selectedOptions} onChange={handleSelect}>
-        {options.map((option) => (
-          <option
-            key={option.value}
-            selected={option.value === null ? 'selected' : null}
-            value={option.value}
-            disabled={option.value === null ? true : null}
-          >
-            {option.name}
-          </option>
-        ))}
-      </select>
+      <label htmlFor="tool">
+        <select name="tool" id="tool" value={props.selectedOptions} onChange={handleSelect}>
+          {options.map((option) => (
+            <option
+              key={option.value}
+              selected={option.value === null ? 'selected' : null}
+              value={option.value}
+              disabled={option.value === null ? true : null}
+            >
+              {option.name}
+            </option>
+          ))}
+        </select>
+      </label>
       <ul>
         {props.selectedOptions.map((option, ind) => {
           return (
             <>
-              <li key={props.selectedOptions.length}>{option}</li>
               {props.selectedOptions.length > 0 ? (
-                <>
+                <li key={props.selectedOptions.length}>
                   <button onClick={() => handleToolDelete(ind)}>X</button>
-                </>
+                  {option}
+                </li>
               ) : null}
             </>
           );

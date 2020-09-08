@@ -4,29 +4,12 @@ import firebaseConfig from './components/firebaseConfig.jsx';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import withFirebaseAuth from 'react-with-firebase-auth';
-// import Authentication from './components/Authentication';
-import useDebounce from './use-debounce';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-import algoliasearch from 'algoliasearch/lite';
-// import { InstantSearch, SearchBox, Hits } from 'react-instantsearch-dom';
-
-import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { MdAccountCircle } from 'react-icons/md';
-import Home from './components/Home';
-import Info from './components/Info';
+import Cards from './components/Cards';
+import ColorPicker from './components/ColorPicker';
+import NewEntry from './components/NewEntry';
 import Header from './components/Header';
 import Footer from './components/Footer';
-
-import {
-  InstantSearch,
-  Hits,
-  SearchBox,
-  RefinementList,
-  Pagination,
-  Highlight,
-} from 'react-instantsearch-dom';
-import PropTypes from 'prop-types';
 
 export const UserContext = React.createContext();
 
@@ -34,12 +17,9 @@ const firebaseAppAuth = firebase.auth();
 
 function App({ createUserWithEmailAndPassword, signInWithEmailAndPassword }) {
   const [items, setItems] = useState([]);
-
-  const [globalCheckbox, setGlobalCheckbox] = useState(false);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState();
   const [isSearching, setIsSearching] = useState(false);
-  const debouncedItems = useDebounce(items, 500);
   const [displayName, setDisplayName] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [fake, setFake] = useState(null);
@@ -97,25 +77,17 @@ function App({ createUserWithEmailAndPassword, signInWithEmailAndPassword }) {
     });
   }, [user, isLoggedIn]);
 
-  const handleGlobalChecked = () => {
-    setGlobalCheckbox(!globalCheckbox);
-  };
-
-  // const Entries = React.lazy(() => import('./Entries'));
-
   const handleCardsAdd = (newItems) => {
     setItems(newItems);
   };
-
-  // const [user, dispatch] = useReducer(reducer, initialState);
-  const searchClient = algoliasearch('MECACEVTIQ', '992684a9f8b18acf0050954944f2f42b');
   const [colorTheme, setColorTheme] = useState('blue');
 
   const toggleColorTheme = () => {
     setColorTheme((prevState) => (prevState === 'blue' ? 'pink' : 'blue'));
   };
+
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <>
       <Header
         colorTheme={colorTheme}
         toggleColorTheme={toggleColorTheme}
@@ -129,27 +101,18 @@ function App({ createUserWithEmailAndPassword, signInWithEmailAndPassword }) {
         fake={fake}
       />
       <main className={`main-container ${colorTheme}`}>
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/info" component={Info} />
-        </Switch>
-        <Home
-          handleGlobalChecked={handleGlobalChecked}
-          globalCheckbox={globalCheckbox}
-          user={user}
-          items={items}
-          handleCardsAdd={handleCardsAdd}
-          displayName={displayName}
-        />
+        <div className="wrapper">
+          <NewEntry handleCardsAdd={handleCardsAdd} displayName={displayName} user={user} />
+          <Cards items={items} user={user} />
+          <ColorPicker />
+        </div>
       </main>
       <Footer />
-
-      {/* <InstantSearch searchClient={searchClient} indexName="dev_OKSANA">
-        <div className="inputSearch">
-          <h2>Another coding day!</h2>
-          <label className="visuallyHidden">Add another story to your coding journey</label>
-        </div> */}
-    </Router>
+      {/* <div className="inputSearch">
+        <h2>Another coding day!</h2>
+        <label className="visuallyHidden">Add another story to your coding journey</label>
+      </div>{' '} */}
+    </>
   );
 }
 
