@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useReducer, lazy, Suspense } from 'react';
 import './styles/index.scss';
-import NewEntry from './components/NewEntry.jsx';
 import firebaseConfig from './components/firebaseConfig.jsx';
-import 'react-datepicker/dist/react-datepicker.css';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import withFirebaseAuth from 'react-with-firebase-auth';
 // import Authentication from './components/Authentication';
 import useDebounce from './use-debounce';
-import Cards from './components/Cards';
-import ColorPicker from './components/ColorPicker';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import algoliasearch from 'algoliasearch/lite';
 // import { InstantSearch, SearchBox, Hits } from 'react-instantsearch-dom';
 
@@ -36,7 +34,7 @@ const firebaseAppAuth = firebase.auth();
 
 function App({ createUserWithEmailAndPassword, signInWithEmailAndPassword }) {
   const [items, setItems] = useState([]);
-  const [currentDate, setDate] = useState(new Date());
+
   const [globalCheckbox, setGlobalCheckbox] = useState(false);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState();
@@ -103,14 +101,6 @@ function App({ createUserWithEmailAndPassword, signInWithEmailAndPassword }) {
     setGlobalCheckbox(!globalCheckbox);
   };
 
-  const handleDateChange = (date) => {
-    setDate(date);
-  };
-
-  const handleDateSelect = (date) => {
-    setDate(date);
-  };
-
   // const Entries = React.lazy(() => import('./Entries'));
 
   const handleCardsAdd = (newItems) => {
@@ -143,6 +133,14 @@ function App({ createUserWithEmailAndPassword, signInWithEmailAndPassword }) {
           <Route exact path="/" component={Home} />
           <Route path="/info" component={Info} />
         </Switch>
+        <Home
+          handleGlobalChecked={handleGlobalChecked}
+          globalCheckbox={globalCheckbox}
+          user={user}
+          items={items}
+          handleCardsAdd={handleCardsAdd}
+          displayName={displayName}
+        />
       </main>
       <Footer />
 
@@ -151,52 +149,9 @@ function App({ createUserWithEmailAndPassword, signInWithEmailAndPassword }) {
           <h2>Another coding day!</h2>
           <label className="visuallyHidden">Add another story to your coding journey</label>
         </div> */}
-
-      <label htmlFor="globalCheckbox">Global Checkbox</label>
-      <input
-        name="globalCheckbox"
-        type="checkbox"
-        onChange={handleGlobalChecked}
-        defaultChecked={globalCheckbox}
-      />
-
-      <NewEntry
-        handleCardsAdd={handleCardsAdd}
-        currentDate={currentDate}
-        displayName={displayName}
-        user={user}
-        handleDateChange={handleDateChange}
-        handleDateSelect={handleDateSelect}
-        item="new entry"
-        isGlobalChecked={globalCheckbox}
-      />
-
-      <Cards items={items} user={user} />
-      <ColorPicker />
-
-      {/* <SearchBox /> */}
-      {/* <Hits hitComponent={Hit} /> */}
-      {/* </InstantSearch> */}
     </Router>
   );
 }
-
-// function Hit(props) {
-//   return (
-//     <article>
-//       <h1>
-//         <Highlight attribute="name" hit={props.hit} />
-//       </h1>
-//       <p>
-//         <Highlight attribute="description" hit={props.hit} />
-//       </p>
-//     </article>
-//   );
-// }
-
-// Hit.propTypes = {
-//   hit: PropTypes.object.isRequired,
-// };
 
 export default withFirebaseAuth({
   firebaseAppAuth,

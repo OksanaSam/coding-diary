@@ -44,7 +44,7 @@ const Cards = (props) => {
   // };
   return (
     <>
-      {props.items.length ? (
+      {props.items ? (
         <ul className="here">
           {props.items.map((item) => {
             return (

@@ -3,6 +3,7 @@ import firebase from 'firebase/app';
 // import styled, { css } from 'styled-components';
 import Swal from 'sweetalert2';
 import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { format, compareAsc } from 'date-fns';
 import SelectedTools from './SelectedTools';
 
@@ -18,10 +19,10 @@ const NewEntry = (props) => {
   const [items, setItems] = useState(JSON.parse(localStorage.getItem('items')) || []);
 
   useEffect(() => {
-    setChecked(props.isGlobalChecked);
+    setChecked(props.globalCheckbox);
     localStorage.setItem('selectedTools', JSON.stringify(selectedOptions));
     localStorage.setItem('items', JSON.stringify(items));
-  }, [props.isGlobalChecked, selectedOptions, items]);
+  }, [props.globalCheckbox, selectedOptions, items]);
 
   const handleChecked = () => {
     setChecked(!isChecked);
