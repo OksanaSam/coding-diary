@@ -89,7 +89,7 @@ function Header(props) {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/info">Info</Link>
+                <Link to="/info">About</Link>
               </li>
               <li>
                 {props.user !== null ? (
