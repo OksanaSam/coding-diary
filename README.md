@@ -1,5 +1,7 @@
 An app documenting my coding journey day by day 👩‍💻 Built on React (with Hooks) using Firebase🔥
 
+https://coding-diary.netlify.app/
+
 Created with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
