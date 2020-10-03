@@ -40,8 +40,12 @@ const SignInModal = (props) => {
         </button>
         <h3>Sign in with Gmail, GitHub or Twitter</h3>
         <div className="modalButtons">
-          <button className="gmailButton" onClick={props.googleSignin}>
+          {/* <button className="gmailButton" onClick={props.googleSignin}>
             <FaGoogle />
+          </button> */}
+          <button onClick={props.googleSignin} className="ui red google button">
+            <i className="google icon" />
+            {/* Sign In with Google */}
           </button>
           <button className="gitHubButton" onClick={props.handleGitHubLogin}>
             <FaGithub />
