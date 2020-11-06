@@ -1,4 +1,6 @@
 An app documenting my coding journey day by day 👩‍💻 Built on React (with Hooks) using Firebase🔥
+Sign-in options: with Gmail, GitHub and Twitter 
+Authentication via Firebase 
 
 https://coding-diary.netlify.app/
 
